@@ -1,0 +1,44 @@
+.container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.tabs {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.ingredients {
+  max-height: 400px; 
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.ingredients::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ingredients::-webkit-scrollbar-thumb {
+  background-color: #4c4c4c;
+  border-radius: 3px;
+}
+
+.items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.item {
+  width: 120px;
+  text-align: center;
+}
+
+.image {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
