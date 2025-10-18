@@ -1,44 +1,78 @@
-.container {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
+.burgerIngredients {
+  width: 600px;
+  padding: 40px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
 }
 
 .tabs {
   display: flex;
-  gap: 16px;
-  margin-bottom: 16px;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
-.ingredients {
-  max-height: 400px; 
+.scrollArea {
   overflow-y: auto;
-  padding-right: 8px;
+  height: calc(100vh - 250px);
+  padding-right: 10px;
 }
 
-.ingredients::-webkit-scrollbar {
-  width: 6px;
+.group {
+  margin-bottom: 40px;
 }
 
-.ingredients::-webkit-scrollbar-thumb {
-  background-color: #4c4c4c;
-  border-radius: 3px;
-}
-
-.items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+.groupTitle {
+  font-size: 20px;
+  font-weight: 700;
   margin-bottom: 24px;
 }
 
-.item {
-  width: 120px;
-  text-align: center;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
 }
 
 .image {
-  width: 100%;
-  border-radius: 8px;
-  margin-bottom: 8px;
+  width: 240px;
+  height: 120px;
+  object-fit: contain;
+}
+
+.price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.priceValue {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.name {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.counter {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
