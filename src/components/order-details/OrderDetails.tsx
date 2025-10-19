@@ -10,7 +10,7 @@ type Props = {
 const OrderDetails: React.FC<Props> = ({ orderNumber }) => {
   return (
     <div className={styles.container}>
-      <p className="text text_type_digits-large mb-8">{orderNumber}</p>
+      <p className={`text text_type_digits-large mb-8 ${styles.glowingText}`}>{orderNumber}</p>
       <p className="text text_type_main-medium mb-15">идентификатор заказа</p>
       <CheckMarkIcon type="primary" />
       <p className="text text_type_main-default mt-15">Ваш заказ начали готовить</p>

@@ -11,12 +11,11 @@
   height: 120px;
 }
 
-.glowing-text {
-  color: #f2f2f3;
-  text-shadow: 
-    0 0 4px #fff,
-    0 0 8px #fff,
-    0 0 12px #ffcc00,
-    0 0 16px #ffcc00,
-    0 0 20px #ffcc00;
+.glowingText {
+  color: #fff; 
+  text-shadow:
+    0 0 6px rgba(55, 55, 136, 0.8),
+    0 0 12px rgba(55, 55, 136, 0.6),
+    0 0 18px rgba(55, 55, 136, 0.5),
+    0 0 24px rgba(55, 55, 136, 0.4);
 }
