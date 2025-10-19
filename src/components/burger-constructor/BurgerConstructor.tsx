@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import Modal from "../modal/Modal";
 import IngredientDetails from "../ingredient-details/IngredientDetails";
 import OrderDetails from "../order-details/OrderDetails";
+import PropTypes from 'prop-types';
 
 type Props = {
   ingredients: TIngredient[];
@@ -95,3 +96,15 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
 };
 
 export default BurgerConstructor;
+
+BurgerConstructor.propTypes = {
+  ingredients: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['bun', 'sauce', 'main']).isRequired,
+      price: PropTypes.number.isRequired,
+      image: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+};
