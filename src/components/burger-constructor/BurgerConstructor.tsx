@@ -8,9 +8,7 @@ import {
 import { TIngredient } from "../../utils/types";
 import React, { useState } from "react";
 import Modal from "../modal/Modal";
-import IngredientDetails from "../ingredient-details/IngredientDetails";
 import OrderDetails from "../order-details/OrderDetails";
-import PropTypes from 'prop-types';
 
 type Props = {
   ingredients: TIngredient[];
@@ -22,8 +20,6 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
     (i) => i.type === "main" || i.type === "sauce"
   );
 
-  const [selectedIngredient, setSelectedIngredient] =
-    useState<TIngredient | null>(null);
   const [isOrderOpen, setIsOrderOpen] = useState(false);
 
   return (
@@ -43,11 +39,7 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
 
         <ul className={`${styles.scrollArea} custom-scroll`}>
           {mains.map((item) => (
-            <li
-              key={item._id}
-              className={styles.item}
-              onClick={() => setSelectedIngredient(item)}
-            >
+            <li key={item._id} className={styles.item}>
               <DragIcon type="primary" />
               <ConstructorElement
                 text={item.name}
@@ -80,11 +72,6 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
           Оформить заказ
         </Button>
       </div>
-      {selectedIngredient && (
-        <Modal onClose={() => setSelectedIngredient(null)}>
-          <IngredientDetails ingredient={selectedIngredient!} />
-        </Modal>
-      )}
 
       {isOrderOpen && (
         <Modal onClose={() => setIsOrderOpen(false)}>
@@ -96,15 +83,3 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
 };
 
 export default BurgerConstructor;
-
-BurgerConstructor.propTypes = {
-  ingredients: PropTypes.arrayOf(
-    PropTypes.shape({
-      _id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(['bun', 'sauce', 'main']).isRequired,
-      price: PropTypes.number.isRequired,
-      image: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-};

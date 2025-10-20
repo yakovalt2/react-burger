@@ -1,7 +1,6 @@
 import React from 'react';
 import styles from './ingredient-details.module.css';
 import { TIngredient } from '../../utils/types';
-import PropTypes from 'prop-types';
 
 type Props = {
   ingredient: TIngredient;
@@ -35,15 +34,3 @@ const IngredientDetails: React.FC<Props> = ({ ingredient }) => {
 };
 
 export default IngredientDetails;
-
-IngredientDetails.propTypes = {
-  ingredient: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    image_large: PropTypes.string.isRequired,
-    calories: PropTypes.number,
-    proteins: PropTypes.number,
-    fat: PropTypes.number,
-    carbohydrates: PropTypes.number,
-  }).isRequired,
-};
