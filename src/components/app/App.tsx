@@ -2,7 +2,7 @@ import React from 'react';
 import AppHeader from '../app-header/AppHeader';
 import styles from './App.module.css';
 import BurgerIngredients from '../burger-ingredients/BurgerIngredients';
-// import { ingredientsData } from '../../utils/data';
+import { testData } from '../../utils/data'
 import BurgerConstructor from '../burger-constructor/BurgerConstructor';
 import { useState, useEffect } from 'react';
 import { TIngredient } from '../../utils/types';
@@ -24,6 +24,7 @@ function App() {
         setIngredients(data.data);
       } catch (error) {
         setHasError(true);
+        setIngredients(testData);
         console.error('Ошибка при загрузке ингредиентов:', error);
       } finally {
         setIsLoading(false);
@@ -35,10 +36,6 @@ function App() {
 
   if (isLoading) {
     return <p>Загрузка...</p>;
-  }
-
-  if (hasError) {
-    return <p>Произошла ошибка при загрузке данных 😢</p>;
   }
 
   return (

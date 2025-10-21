@@ -56,7 +56,7 @@ const BurgerIngredients: React.FC<Props> = ({ ingredients }) => {
       </div>
 
       {selectedIngredient && (
-        <Modal onClose={() => setSelectedIngredient(null)}>
+        <Modal title="Детали ингредиента" onClose={() => setSelectedIngredient(null)}>
           <IngredientDetails ingredient={selectedIngredient} />
         </Modal>
       )}

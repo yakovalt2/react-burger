@@ -5,13 +5,14 @@ import ModalOverlay from './ModalOverlay';
 import { CloseIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 
 type ModalProps = {
+  title?: string;
   onClose: () => void;
   children: React.ReactNode;
 };
 
 const modalRoot = document.getElementById('react-modals') as HTMLElement;
 
-const Modal: React.FC<ModalProps> = ({ onClose, children }) => {
+const Modal: React.FC<ModalProps> = ({ title, onClose, children }) => {
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -24,7 +25,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, children }) => {
     <>
       <div className={styles.modal}>
         <div className={styles.header}>
-          <h2 className={styles.title}>Детали ингредиента</h2>
+          {title && <h2 className={styles.title}>{title}</h2>}
           <button className={styles.closeBtn} onClick={onClose}>
             <CloseIcon type="primary" />
           </button>
