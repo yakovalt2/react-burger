@@ -1,41 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import AppHeader from '../app-header/AppHeader';
 import styles from './App.module.css';
 import BurgerIngredients from '../burger-ingredients/BurgerIngredients';
-import { testData } from '../../utils/data'
 import BurgerConstructor from '../burger-constructor/BurgerConstructor';
-import { useState, useEffect } from 'react';
-import { TIngredient } from '../../utils/types';
-import { API_URL } from '../../utils/constants';
+import { useAppDispatch, useAppSelector } from '../../services/store';
+import { fetchIngredients } from '../../services/slices/IngredientsSlice';
 
 function App() {
-  const [ingredients, setIngredients] = useState<TIngredient[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  const dispatch = useAppDispatch();
+  const { items: ingredients, status, error } = useAppSelector(state => state.ingredients);
 
   useEffect(() => {
-    const fetchIngredients = async () => {
-      try {
-        const res = await fetch(`${API_URL}/ingredients`);
-         if (!res.ok) {
-          throw new Error(`Ошибка сервера: ${res.status}`);
-        }
-        const data = await res.json();
-        setIngredients(data.data);
-      } catch (error) {
-        setHasError(true);
-        setIngredients(testData);
-        console.error('Ошибка при загрузке ингредиентов:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    dispatch(fetchIngredients());
+  }, [dispatch]);
 
-    fetchIngredients();
-  }, []);
-
-  if (isLoading) {
+  if (status === 'loading') {
     return <p>Загрузка...</p>;
+  }
+
+  if (status === 'failed') {
+    return <p>Ошибка: {error}</p>;
   }
 
   return (
@@ -47,6 +31,6 @@ function App() {
       </main>
     </div>
   );
-};
+}
 
 export default App;
