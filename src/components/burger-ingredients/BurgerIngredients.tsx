@@ -8,6 +8,7 @@ import {
 import { TIngredient } from "../../utils/types";
 import Modal from "../modal/Modal";
 import IngredientDetails from "../ingredient-details/IngredientDetails";
+import { useDrag } from "react-dnd";
 
 type Props = {
   ingredients: TIngredient[];
@@ -72,13 +73,13 @@ const BurgerIngredients: React.FC<Props> = ({ ingredients }) => {
       <h1 className={`${styles.title} text text_type_main-large`}>Соберите бургер</h1>
 
       <div className={styles.tabs}>
-        <Tab value="bun" active={current === "bun"} onClick={handleTabClick}>
+        <Tab value="bun" active={current === "bun"} onClick={() => handleTabClick("bun")}>
           Булки
         </Tab>
-        <Tab value="sauce" active={current === "sauce"} onClick={handleTabClick}>
+        <Tab value="sauce" active={current === "sauce"} onClick={() => handleTabClick("sauce")}>
           Соусы
         </Tab>
-        <Tab value="main" active={current === "main"} onClick={handleTabClick}>
+        <Tab value="main" active={current === "main"} onClick={() => handleTabClick("main")}>
           Начинки
         </Tab>
       </div>
@@ -130,31 +131,56 @@ const IngredientGroup: React.FC<GroupProps> = ({ title, items, onClick }) => (
    <h2 className={`${styles.groupTitle} text text_type_main-medium`}>{title}</h2>
     <div className={styles.grid}>
       {items.map((item) => {
-        const count = 0;
+        const count = (item as any).count ?? 0; 
         return (
-          <div
+          <IngredientCard
             key={item._id}
-            className={styles.card}
-            onClick={() => onClick(item)}
-          >
-            {count > 0 && (
-              <Counter
-                count={count}
-                size="default"
-                extraClass={styles.counter}
-              />
-            )}
-            <img src={item.image} alt={item.name} className={styles.image} />
-            <div className={styles.price}>
-              <span className={styles.priceValue}>{item.price}</span>
-              <CurrencyIcon type="primary" />
-            </div>
-            <p className={`${styles.name} text text_type_main-default`}>{item.name}</p>
-          </div>
+            item={item}
+            count={count}
+            onClick={onClick}
+          />
         );
       })}
     </div>
   </div>
 );
+
+type CardProps = {
+  item: TIngredient;
+  count?: number;
+  onClick: (ingredient: TIngredient) => void;
+};
+
+const IngredientCard: React.FC<CardProps> = ({ item, count = 0, onClick }) => {
+  const [, dragRef] = useDrag(() => ({
+    type: 'ingredient',
+    item: { ...item },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  }), [item]);
+
+  return (
+    <div
+      ref={dragRef as any}
+      className={styles.card}
+      onClick={() => onClick(item)}
+    >
+      {count > 0 && (
+        <Counter
+          count={count}
+          size="default"
+          extraClass={styles.counter}
+        />
+      )}
+      <img src={item.image} alt={item.name} className={styles.image} />
+      <div className={styles.price}>
+        <span className={styles.priceValue}>{item.price}</span>
+        <CurrencyIcon type="primary" />
+      </div>
+      <p className={`${styles.name} text text_type_main-default`}>{item.name}</p>
+    </div>
+  );
+};
 
 export default BurgerIngredients;
