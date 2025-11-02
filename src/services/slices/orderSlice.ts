@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { API_URL } from "../../utils/constants";
-import { checkResponse } from "../../utils/checkResponse"; // ✅ добавили утилиту
+import { request } from "../../utils/request"; 
 
 type OrderState = {
   orderNumber: number | null;
@@ -20,13 +19,11 @@ export const createOrder = createAsyncThunk<
   { rejectValue: string }
 >("order/createOrder", async (ingredientIds, { rejectWithValue }) => {
   try {
-    const res = await fetch(`${API_URL}/orders`, {
+    const data = await request<{ success: boolean; order: { number: number } }>("/orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ingredients: ingredientIds }),
     });
-    
-    const data = await checkResponse<{ success: boolean; order: { number: number } }>(res);
 
     if (!data.success) {
       return rejectWithValue("Ошибка при создании заказа");

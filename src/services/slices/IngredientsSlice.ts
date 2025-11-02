@@ -1,8 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { IngredientWithCount } from '../../utils/types';
-import { API_URL } from '../../utils/constants';
 import { testData } from '../../utils/data';
-import { checkResponse } from '../../utils/checkResponse';
+import { request } from '../../utils/request';
 
 export interface IngredientsState {
   items: IngredientWithCount[];
@@ -22,8 +21,7 @@ export const fetchIngredients = createAsyncThunk<
   { rejectValue: string }
 >('ingredients/fetchIngredients', async (_, { rejectWithValue }) => {
   try {
-    const res = await fetch(`${API_URL}/ingredients`);
-    const data = await checkResponse<{ data: IngredientWithCount[] }>(res);
+    const data = await request<{ data: IngredientWithCount[] }>('/ingredients');
 
     const items = (data.data as IngredientWithCount[]).map(i => ({ ...i, count: i.count ?? 0 }));
     return items;

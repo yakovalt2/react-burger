@@ -23,7 +23,7 @@ import {
   decrementCount,
 } from "../../services/slices/IngredientsSlice";
 import { API_URL } from "../../utils/constants";
-import { checkResponse } from "../../utils/checkResponse";
+import { request } from "../../utils/request";
 
 type Props = {
   ingredients?: TIngredient[];
@@ -159,13 +159,14 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
       setIsLoading(true);
       setError(null);
 
-      const res = await fetch(`${API_URL}/orders`, {
+      const data = await request<{
+        success: boolean;
+        order: { number: number };
+      }>("/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ingredients: ingredientIds }),
       });
-
-      const data = await checkResponse<{ success: boolean; order: { number: number } }>(res);
 
       if (!data.success) throw new Error("Ошибка оформления заказа");
 
