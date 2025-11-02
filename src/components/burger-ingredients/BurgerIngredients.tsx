@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import styles from "./BurgerIngredients.module.css";
 import {
   Tab,
@@ -22,41 +22,96 @@ const BurgerIngredients: React.FC<Props> = ({ ingredients }) => {
   const sauces = ingredients.filter((item) => item.type === "sauce");
   const mains = ingredients.filter((item) => item.type === "main");
 
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const bunRef = useRef<HTMLDivElement | null>(null);
+  const sauceRef = useRef<HTMLDivElement | null>(null);
+  const mainRef = useRef<HTMLDivElement | null>(null);
+
+  const handleScroll = useCallback(() => {
+    if (!scrollContainerRef.current) return;
+
+    const containerTop = scrollContainerRef.current.getBoundingClientRect().top;
+
+    const sections = [
+      { id: "bun", ref: bunRef },
+      { id: "sauce", ref: sauceRef },
+      { id: "main", ref: mainRef },
+    ];
+
+    const distances = sections.map((section) => {
+      const el = section.ref.current;
+      if (!el) return { id: section.id, distance: Infinity };
+      const rect = el.getBoundingClientRect();
+      return { id: section.id, distance: Math.abs(rect.top - containerTop) };
+    });
+
+    const closest = distances.reduce((prev, curr) =>
+      curr.distance < prev.distance ? curr : prev
+    );
+
+    setCurrent(closest.id);
+  }, []);
+
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    scrollContainer.addEventListener("scroll", handleScroll);
+    return () => scrollContainer.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
+  const handleTabClick = (value: string) => {
+    setCurrent(value);
+    const sectionRef =
+      value === "bun" ? bunRef : value === "sauce" ? sauceRef : mainRef;
+    sectionRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <section className={styles.burgerIngredients}>
       <h1 className={styles.title}>Соберите бургер</h1>
+
       <div className={styles.tabs}>
-        <Tab value="bun" active={current === "bun"} onClick={setCurrent}>
+        <Tab value="bun" active={current === "bun"} onClick={handleTabClick}>
           Булки
         </Tab>
-        <Tab value="sauce" active={current === "sauce"} onClick={setCurrent}>
+        <Tab value="sauce" active={current === "sauce"} onClick={handleTabClick}>
           Соусы
         </Tab>
-        <Tab value="main" active={current === "main"} onClick={setCurrent}>
+        <Tab value="main" active={current === "main"} onClick={handleTabClick}>
           Начинки
         </Tab>
       </div>
 
-      <div className={styles.scrollArea}>
-        <IngredientGroup
-          title="Булки"
-          items={buns}
-          onClick={setSelectedIngredient}
-        />
-        <IngredientGroup
-          title="Соусы"
-          items={sauces}
-          onClick={setSelectedIngredient}
-        />
-        <IngredientGroup
-          title="Начинки"
-          items={mains}
-          onClick={setSelectedIngredient}
-        />
+      <div className={styles.scrollArea} ref={scrollContainerRef}>
+        <div ref={bunRef}>
+          <IngredientGroup
+            title="Булки"
+            items={buns}
+            onClick={setSelectedIngredient}
+          />
+        </div>
+        <div ref={sauceRef}>
+          <IngredientGroup
+            title="Соусы"
+            items={sauces}
+            onClick={setSelectedIngredient}
+          />
+        </div>
+        <div ref={mainRef}>
+          <IngredientGroup
+            title="Начинки"
+            items={mains}
+            onClick={setSelectedIngredient}
+          />
+        </div>
       </div>
 
       {selectedIngredient && (
-        <Modal title="Детали ингредиента" onClose={() => setSelectedIngredient(null)}>
+        <Modal
+          title="Детали ингредиента"
+          onClose={() => setSelectedIngredient(null)}
+        >
           <IngredientDetails ingredient={selectedIngredient} />
         </Modal>
       )}
