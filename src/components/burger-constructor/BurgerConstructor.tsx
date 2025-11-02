@@ -20,6 +20,7 @@ import {
   incrementCount,
   decrementCount,
 } from "../../services/slices/IngredientsSlice";
+import { API_URL } from "../../utils/constants";
 
 type Props = {
   ingredients?: TIngredient[];
@@ -28,7 +29,6 @@ type Props = {
 const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
   const dispatch = useAppDispatch();
   const constructor = useAppSelector((state) => state.burgerConstructor);
-  const allIngredients = useAppSelector((state) => state.ingredients.items);
 
   const bun = constructor.bun;
   const mains = constructor.items;
@@ -71,6 +71,43 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
   };
 
   const [isOrderOpen, setIsOrderOpen] = React.useState(false);
+  const [orderNumber, setOrderNumber] = React.useState<number | null>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  const handleOrderClick = async () => {
+    if (!bun) return;
+
+    const ingredientIds = [bun._id, ...mains.map((i) => i._id), bun._id];
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const res = await fetch(`${API_URL}/orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ingredients: ingredientIds }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Ошибка: ${res.status}`);
+      }
+
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error("Ошибка оформления заказа");
+      }
+      
+      setOrderNumber(data.order.number);
+      setIsOrderOpen(true);
+    } catch (err: any) {
+      setError(err.message);
+      console.error("Ошибка оформления заказа:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <section className={styles.burgerConstructor} ref={dropRef as any}>
@@ -123,15 +160,22 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
           htmlType="button"
           type="primary"
           size="large"
-          onClick={() => setIsOrderOpen(true)}
+          onClick={handleOrderClick}
+          disabled={isLoading || !bun}
         >
-          Оформить заказ
+          {isLoading ? "Оформляем..." : "Оформить заказ"}
         </Button>
       </div>
 
-      {isOrderOpen && (
+      {error && (
+        <p style={{ color: "red", textAlign: "center", marginTop: "10px" }}>
+          {error}
+        </p>
+      )}
+
+      {isOrderOpen && orderNumber && (
         <Modal onClose={() => setIsOrderOpen(false)}>
-          <OrderDetails orderNumber={12345} />
+          <OrderDetails orderNumber={orderNumber} />
         </Modal>
       )}
     </section>
