@@ -25,10 +25,6 @@ export const createOrder = createAsyncThunk<
       body: JSON.stringify({ ingredients: ingredientIds }),
     });
 
-    if (!data.success) {
-      return rejectWithValue("Ошибка при создании заказа");
-    }
-
     return data.order.number;
   } catch (err) {
     return rejectWithValue("Ошибка при создании заказа");

@@ -168,8 +168,6 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
         body: JSON.stringify({ ingredients: ingredientIds }),
       });
 
-      if (!data.success) throw new Error("Ошибка оформления заказа");
-
       setOrderNumber(data.order.number);
       setIsOrderOpen(true);
     } catch (err: any) {
