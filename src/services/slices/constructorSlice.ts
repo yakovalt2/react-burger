@@ -5,7 +5,7 @@ type ConstructorItem = IngredientWithCount & { uid?: string };
 
 type ConstructorState = {
   bun: ConstructorItem | null;
-  items: ConstructorItem[]; 
+  items: ConstructorItem[];
 };
 
 const initialState: ConstructorState = {
@@ -22,7 +22,9 @@ const constructorSlice = createSlice({
       if (ingredient.type === "bun") {
         state.bun = { ...ingredient };
       } else {
-        const uid = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2,9)}`;
+        const uid = `${Date.now().toString(36)}-${Math.random()
+          .toString(36)
+          .slice(2, 9)}`;
         state.items.push({ ...ingredient, uid });
       }
     },
@@ -31,7 +33,7 @@ const constructorSlice = createSlice({
       if (typeof payload === "number") {
         state.items.splice(payload, 1);
       } else {
-        state.items = state.items.filter(i => i.uid !== payload);
+        state.items = state.items.filter((i) => i.uid !== payload);
       }
     },
     moveIngredient: (
@@ -39,7 +41,12 @@ const constructorSlice = createSlice({
       action: PayloadAction<{ fromIndex: number; toIndex: number }>
     ) => {
       const { fromIndex, toIndex } = action.payload;
-      if (fromIndex < 0 || toIndex < 0 || fromIndex >= state.items.length || toIndex >= state.items.length) {
+      if (
+        fromIndex < 0 ||
+        toIndex < 0 ||
+        fromIndex >= state.items.length ||
+        toIndex >= state.items.length
+      ) {
         return;
       }
       const [moved] = state.items.splice(fromIndex, 1);
@@ -51,7 +58,7 @@ const constructorSlice = createSlice({
     },
     setBun: (state, action: PayloadAction<IngredientWithCount | null>) => {
       state.bun = action.payload ? { ...action.payload } : null;
-    }
+    },
   },
 });
 

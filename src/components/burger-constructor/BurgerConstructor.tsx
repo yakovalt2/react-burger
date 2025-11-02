@@ -6,15 +6,17 @@ import {
   CurrencyIcon,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { TIngredient } from "../../utils/types";
-import React from "react";
+import React, { useRef } from "react";
 import Modal from "../modal/Modal";
 import OrderDetails from "../order-details/OrderDetails";
-import { useDrop } from "react-dnd";
+import { useDrop, useDrag, DropTargetMonitor } from "react-dnd";
+import { XYCoord } from "dnd-core";
 import { useAppDispatch, useAppSelector } from "../../services/store";
 import {
   addIngredient,
   removeIngredient,
   setBun,
+  moveIngredient,
 } from "../../services/slices/constructorSlice";
 import {
   incrementCount,
@@ -49,7 +51,6 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
             dispatch(decrementCount(bun._id));
             dispatch(decrementCount(bun._id));
           }
-
           dispatch(setBun({ ...item, count: 2 }));
           dispatch(incrementCount(item._id));
           dispatch(incrementCount(item._id));
@@ -68,6 +69,79 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
   const handleRemove = (uidOrIndex: string | number, item: TIngredient) => {
     dispatch(removeIngredient(uidOrIndex));
     dispatch(decrementCount(item._id));
+  };
+
+  const moveItem = (fromIndex: number, toIndex: number) => {
+    dispatch(moveIngredient({ fromIndex, toIndex }));
+  };
+
+  const RenderIngredient = ({
+    item,
+    index,
+  }: {
+    item: (typeof mains)[0];
+    index: number;
+  }) => {
+    const ref = useRef<HTMLLIElement>(null);
+
+    const [, drop] = useDrop<
+      {
+        index: number;
+      },
+      void,
+      { isOver: boolean }
+    >({
+      accept: "constructor-item",
+      hover(draggedItem, monitor) {
+        if (!ref.current) return;
+        const dragIndex = draggedItem.index;
+        const hoverIndex = index;
+        if (dragIndex === hoverIndex) return;
+
+        const hoverBoundingRect = ref.current.getBoundingClientRect();
+        const hoverMiddleY =
+          (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+        const clientOffset = monitor.getClientOffset();
+        const hoverClientY =
+          (clientOffset as XYCoord).y - hoverBoundingRect.top;
+
+        if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
+        if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return;
+
+        moveItem(dragIndex, hoverIndex);
+        draggedItem.index = hoverIndex;
+      },
+      collect: (monitor) => ({
+        isOver: monitor.isOver(),
+      }),
+    });
+
+    const [{ isDragging }, drag] = useDrag({
+      type: "constructor-item",
+      item: { index },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    });
+
+    drag(drop(ref));
+
+    return (
+      <li
+        ref={ref}
+        className={styles.item}
+        style={{ opacity: isDragging ? 0.5 : 1 }}
+        key={item.uid ?? item._id}
+      >
+        <DragIcon type="primary" />
+        <ConstructorElement
+          text={item.name}
+          price={item.price}
+          thumbnail={item.image}
+          handleClose={() => handleRemove(item.uid ?? item._id, item)}
+        />
+      </li>
+    );
   };
 
   const [isOrderOpen, setIsOrderOpen] = React.useState(false);
@@ -90,15 +164,11 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
         body: JSON.stringify({ ingredients: ingredientIds }),
       });
 
-      if (!res.ok) {
-        throw new Error(`Ошибка: ${res.status}`);
-      }
+      if (!res.ok) throw new Error(`Ошибка: ${res.status}`);
 
       const data = await res.json();
-      if (!data.success) {
-        throw new Error("Ошибка оформления заказа");
-      }
-      
+      if (!data.success) throw new Error("Ошибка оформления заказа");
+
       setOrderNumber(data.order.number);
       setIsOrderOpen(true);
     } catch (err: any) {
@@ -116,7 +186,7 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
           <div className={`${styles.bun} mb-4 ml-8`}>
             <ConstructorElement
               type="top"
-              isLocked={true}
+              isLocked
               text={`${bun.name} (верх)`}
               price={bun.price}
               thumbnail={bun.image}
@@ -125,16 +195,12 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
         )}
 
         <ul className={`${styles.scrollArea} custom-scroll`}>
-          {mains.map((item) => (
-            <li key={item.uid ?? item._id} className={styles.item}>
-              <DragIcon type="primary" />
-              <ConstructorElement
-                text={item.name}
-                price={item.price}
-                thumbnail={item.image}
-                handleClose={() => handleRemove(item.uid ?? item._id, item)}
-              />
-            </li>
+          {mains.map((item, index) => (
+            <RenderIngredient
+              key={item.uid ?? item._id}
+              item={item}
+              index={index}
+            />
           ))}
         </ul>
 
@@ -142,7 +208,7 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
           <div className={`${styles.bun} mt-4 ml-8`}>
             <ConstructorElement
               type="bottom"
-              isLocked={true}
+              isLocked
               text={`${bun.name} (низ)`}
               price={bun.price}
               thumbnail={bun.image}
