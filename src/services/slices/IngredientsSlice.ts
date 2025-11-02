@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { IngredientWithCount } from '../../utils/types';
 import { API_URL } from '../../utils/constants';
 import { testData } from '../../utils/data';
+import { checkResponse } from '../../utils/checkResponse';
 
 export interface IngredientsState {
   items: IngredientWithCount[];
@@ -22,10 +23,8 @@ export const fetchIngredients = createAsyncThunk<
 >('ingredients/fetchIngredients', async (_, { rejectWithValue }) => {
   try {
     const res = await fetch(`${API_URL}/ingredients`);
-    if (!res.ok) {
-      throw new Error(`Ошибка сервера: ${res.status}`);
-    }
-    const data = await res.json();
+    const data = await checkResponse<{ data: IngredientWithCount[] }>(res);
+
     const items = (data.data as IngredientWithCount[]).map(i => ({ ...i, count: i.count ?? 0 }));
     return items;
   } catch (err: any) {

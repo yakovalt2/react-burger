@@ -23,6 +23,7 @@ import {
   decrementCount,
 } from "../../services/slices/IngredientsSlice";
 import { API_URL } from "../../utils/constants";
+import { checkResponse } from "../../utils/checkResponse";
 
 type Props = {
   ingredients?: TIngredient[];
@@ -164,9 +165,8 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
         body: JSON.stringify({ ingredients: ingredientIds }),
       });
 
-      if (!res.ok) throw new Error(`Ошибка: ${res.status}`);
+      const data = await checkResponse<{ success: boolean; order: { number: number } }>(res);
 
-      const data = await res.json();
       if (!data.success) throw new Error("Ошибка оформления заказа");
 
       setOrderNumber(data.order.number);
