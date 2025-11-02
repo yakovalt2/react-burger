@@ -174,8 +174,8 @@ const IngredientCard: React.FC<CardProps> = ({ item, count = 0, onClick }) => {
         />
       )}
       <img src={item.image} alt={item.name} className={styles.image} />
-      <div className={styles.price}>
-        <span className={styles.priceValue}>{item.price}</span>
+      <div className={styles.price }>
+        <span className={`${styles.priceValue} text text_type_digits-medium`}>{item.price}</span>
         <CurrencyIcon type="primary" />
       </div>
       <p className={`${styles.name} text text_type_main-default`}>{item.name}</p>

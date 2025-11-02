@@ -33,8 +33,11 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
   const bun = constructor.bun;
   const mains = constructor.items;
 
-  const totalPrice =
-    (bun ? bun.price * 2 : 0) + mains.reduce((sum, i) => sum + i.price, 0);
+  const totalPrice = React.useMemo(() => {
+    return (
+      (bun ? bun.price * 2 : 0) + mains.reduce((sum, i) => sum + i.price, 0)
+    );
+  }, [bun, mains]);
 
   const [, dropRef] = useDrop(
     () => ({
