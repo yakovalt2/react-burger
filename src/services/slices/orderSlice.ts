@@ -19,7 +19,7 @@ export const createOrder = createAsyncThunk<
   { rejectValue: string }
 >("order/createOrder", async (ingredientIds, { rejectWithValue }) => {
   try {
-    const data = await request<{ success: boolean; order: { number: number } }>("/orders", {
+    const data = await request<{ success: boolean; order: { number: number } }>("orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ingredients: ingredientIds }),

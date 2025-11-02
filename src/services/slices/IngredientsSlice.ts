@@ -20,7 +20,7 @@ export const fetchIngredients = createAsyncThunk<
   { rejectValue: string }
 >('ingredients/fetchIngredients', async (_, { rejectWithValue }) => {
   try {
-    const data = await request<{ data: IngredientWithCount[] }>('/ingredients');
+    const data = await request<{ data: IngredientWithCount[] }>('ingredients');
 
     const items = (data.data as IngredientWithCount[]).map(i => ({ ...i, count: i.count ?? 0 }));
     return items;

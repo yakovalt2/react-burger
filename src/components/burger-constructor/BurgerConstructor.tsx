@@ -162,7 +162,7 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
       const data = await request<{
         success: boolean;
         order: { number: number };
-      }>("/orders", {
+      }>("orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ingredients: ingredientIds }),
