@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { IngredientWithCount } from '../../utils/types';
-import { testData } from '../../utils/data';
 import { request } from '../../utils/request';
 
 export interface IngredientsState {
@@ -27,7 +26,7 @@ export const fetchIngredients = createAsyncThunk<
     return items;
   } catch (err: any) {
     console.error('Ошибка при загрузке ингредиентов:', err);
-    return testData.map(i => ({ ...i, count: 0 }));
+    return rejectWithValue(err.message || 'Ошибка при загрузке ингредиентов');
   }
 });
 
@@ -57,12 +56,12 @@ const ingredientsSlice = createSlice({
       })
       .addCase(fetchIngredients.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.items = action.payload.length ? action.payload : testData.map(i => ({ ...i, count: 0 }));
+        state.items = action.payload;
       })
       .addCase(fetchIngredients.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload || 'Ошибка при загрузке ингредиентов';
-        state.items = testData.map(i => ({ ...i, count: 0 }));
+        state.items = [];
       });
   },
 });
