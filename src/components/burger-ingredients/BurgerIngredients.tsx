@@ -69,7 +69,7 @@ const BurgerIngredients: React.FC<Props> = ({ ingredients }) => {
 
   return (
     <section className={styles.burgerIngredients}>
-      <h1 className={styles.title}>Соберите бургер</h1>
+      <h1 className={`${styles.title} text text_type_main-large`}>Соберите бургер</h1>
 
       <div className={styles.tabs}>
         <Tab value="bun" active={current === "bun"} onClick={handleTabClick}>
@@ -127,7 +127,7 @@ type GroupProps = {
 
 const IngredientGroup: React.FC<GroupProps> = ({ title, items, onClick }) => (
   <div className={styles.group}>
-    <h2 className={styles.groupTitle}>{title}</h2>
+   <h2 className={`${styles.groupTitle} text text_type_main-medium`}>{title}</h2>
     <div className={styles.grid}>
       {items.map((item) => {
         const count = 0;
@@ -149,7 +149,7 @@ const IngredientGroup: React.FC<GroupProps> = ({ title, items, onClick }) => (
               <span className={styles.priceValue}>{item.price}</span>
               <CurrencyIcon type="primary" />
             </div>
-            <p className={styles.name}>{item.name}</p>
+            <p className={`${styles.name} text text_type_main-default`}>{item.name}</p>
           </div>
         );
       })}
