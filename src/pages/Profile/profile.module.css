@@ -47,4 +47,13 @@
   display: flex;
   gap: 16px;
   margin-top: 8px;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+.buttonGroup.active {
+  opacity: 1;
+  max-height: 100px;
 }

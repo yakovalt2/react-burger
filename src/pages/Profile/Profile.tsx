@@ -23,6 +23,8 @@ export function ProfilePage() {
 
   const auth = useAppSelector((state) => state.auth);
 
+  const [isChanged, setIsChanged] = useState(false);
+
   useEffect(() => {
     if (!auth.user) {
       dispatch(getUser());
@@ -32,8 +34,17 @@ export function ProfilePage() {
     }
   }, [auth.user, dispatch]);
 
+  useEffect(() => {
+    if (!auth.user) return;
+    setIsChanged(
+      name !== auth.user.name || email !== auth.user.email || password !== ""
+    );
+  }, [name, email, password, auth.user]);
+
   const handleSave = () => {
     dispatch(updateUser({ name, email, password }));
+    setPassword("");
+    setIsChanged(false);
   };
 
   const handleCancel = () => {
@@ -112,7 +123,7 @@ export function ProfilePage() {
           onPointerLeaveCapture={() => {}}
         />
 
-        <div className={styles.buttonGroup}>
+        <div className={`${styles.buttonGroup} ${isChanged ? styles.active : ""}`}>
           <Button
             htmlType="button"
             type="primary"
