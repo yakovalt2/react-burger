@@ -9,12 +9,12 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  width: 220px;
+  width: 300px;
 }
 
 .link {
   color: #8585ad;
-  font-size: 18px;
+  font-size: 24px;
   cursor: pointer;
   text-decoration: none;
 }
@@ -41,19 +41,19 @@
   text-align: left;
   padding-left: 0; 
   color: #8585ad;
+  font-size: 24px;
 }
 
 .buttonGroup {
-  display: flex;
+  display: none; 
   gap: 16px;
   margin-top: 8px;
-  opacity: 0;
-  max-height: 0;
-  overflow: hidden;
-  transition: opacity 0.3s ease, max-height 0.3s ease;
 }
 
 .buttonGroup.active {
-  opacity: 1;
-  max-height: 100px;
+  display: flex;
+}
+
+:global(.text-profile) {
+  opacity: 0.4 !important;
 }

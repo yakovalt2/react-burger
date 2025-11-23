@@ -72,6 +72,7 @@ export function LoginPage() {
           htmlType="submit"
           type="primary"
           size="medium"
+          extraClass="mb-20"
           disabled={loading}
         >
           {loading ? "Вход..." : "Войти"}
@@ -92,5 +93,5 @@ export function LoginPage() {
         </p>
       </form>
     </div>
-  );
+  ); 
 }

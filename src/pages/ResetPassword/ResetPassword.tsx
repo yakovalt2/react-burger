@@ -32,9 +32,9 @@ export function ResetPasswordPage() {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.page}>
       <form className={styles.form} onSubmit={handleSubmit}>
-        <h1 className='text text_type_main-large'>Введите новый пароль</h1>
+        <h1 className='text text_type_main-medium'>Восстановление пароля</h1>
 
         <Input
           type="password"
@@ -58,8 +58,8 @@ export function ResetPasswordPage() {
 
         <Button htmlType="submit">Сохранить</Button>
 
-        <p className="text text_type_main-default">
-          Вспомнили пароль? <Link to="/login">Войти</Link>
+        <p className="text mt-20 text_type_main-default">
+          Вспомнили пароль? <Link to="/login" className="text_color_accent">Войти</Link>
         </p>
       </form>
     </div>

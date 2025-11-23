@@ -88,8 +88,10 @@ export function ProfilePage() {
           extraClass={styles.logoutButton}
           onClick={() => dispatch(logoutUser())}
         >
-          Выйти
+          Выход
         </Button>
+
+        <p className="text mt-20 text_type_main-default text-profile">В этом разделе вы можете изменить свои персональные данные</p>
       </nav>
 
       <div className={styles.content}>
@@ -118,6 +120,7 @@ export function ProfilePage() {
           placeholder="Пароль"
           value={password}
           name="password"
+          autoComplete="new-password" 
           onChange={(e) => setPassword(e.target.value)}
           onPointerEnterCapture={() => {}}
           onPointerLeaveCapture={() => {}}
