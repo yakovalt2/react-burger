@@ -6,8 +6,13 @@ import {
   Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { useAppDispatch } from "../../services/store";
-import { logoutUser } from "../../services/slices/authSlice";
+import {
+  logoutUser,
+  getUser,
+  updateUser,
+} from "../../services/slices/authSlice";
 import { useAppSelector } from "../../services/store";
+import { getCookie } from "../../utils/cookie";
 
 export function ProfilePage() {
   const [name, setName] = useState("Имя");
@@ -19,10 +24,25 @@ export function ProfilePage() {
   const auth = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    console.log("Текущее состояние пользователя:", auth.user);
-    console.log("AccessToken:", auth.accessToken);
-    console.log("RefreshToken в localStorage:", localStorage.getItem("refreshToken"));
-  }, [auth.user, auth.accessToken]);
+    if (!auth.user) {
+      dispatch(getUser());
+    } else {
+      setName(auth.user.name);
+      setEmail(auth.user.email);
+    }
+  }, [auth.user, dispatch]);
+
+  const handleSave = () => {
+    dispatch(updateUser({ name, email, password }));
+  };
+
+  const handleCancel = () => {
+    if (auth.user) {
+      setName(auth.user.name);
+      setEmail(auth.user.email);
+      setPassword("");
+    }
+  };
 
   return (
     <div className={styles.wrapper}>
@@ -88,10 +108,21 @@ export function ProfilePage() {
         />
 
         <div style={{ display: "flex", gap: 16, marginTop: 8 }}>
-          <Button htmlType="button" type="primary" size="medium">
+          <Button
+            htmlType="button"
+            type="primary"
+            size="medium"
+            onClick={handleSave}
+            disabled={!name || !email}
+          >
             Сохранить
           </Button>
-          <Button htmlType="button" type="secondary" size="medium">
+          <Button
+            htmlType="button"
+            type="secondary"
+            size="medium"
+            onClick={handleCancel}
+          >
             Отмена
           </Button>
         </div>

@@ -24,7 +24,6 @@ export function LoginPage() {
 
     try {
       const result = await dispatch(loginUser({ email, password })).unwrap();
-      console.log("Пользователь вошёл:", result.user);
       navigate("/");
     } catch (err: any) {
       console.error("Ошибка входа:", err);

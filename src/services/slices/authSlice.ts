@@ -130,6 +130,76 @@ export const refreshToken = createAsyncThunk(
   }
 );
 
+export const getUser = createAsyncThunk(
+  "auth/getUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const raw = document.cookie
+        .split("; ")
+        .find((c) => c.startsWith("token="))
+        ?.split("=")[1];
+
+      if (!raw) throw new Error("Нет accessToken");
+
+      const token = decodeURIComponent(raw);
+
+      const data = await request<{ success: boolean; user: User }>(
+        "auth/user",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        }
+      );
+
+      return data.user;
+    } catch (err: any) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const updateUser = createAsyncThunk(
+  "auth/updateUser",
+  async (
+    {
+      name,
+      email,
+      password,
+    }: { name?: string; email?: string; password?: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const raw = document.cookie
+        .split("; ")
+        .find((c) => c.startsWith("token="))
+        ?.split("=")[1];
+
+      if (!raw) throw new Error("Нет accessToken");
+
+      const token = decodeURIComponent(raw);
+
+      const data = await request<{ success: boolean; user: User }>(
+        "auth/user",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify({ name, email, password }),
+        }
+      );
+
+      return data.user;
+    } catch (err: any) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -183,6 +253,18 @@ const authSlice = createSlice({
         state.user = null;
         state.accessToken = null;
         state.refreshToken = null;
+        state.error = action.payload as string;
+      })
+      .addCase(getUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(getUser.rejected, (state, action) => {
+        state.error = action.payload as string;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
         state.error = action.payload as string;
       });
   },
