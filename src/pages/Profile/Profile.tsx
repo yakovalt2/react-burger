@@ -51,16 +51,20 @@ export function ProfilePage() {
           to="/profile"
           end
           className={({ isActive }) =>
-            isActive ? styles.linkActive : styles.link
+            `${styles.link} text text_type_main-default ${
+              isActive ? styles.linkActive : ""
+            }`
           }
         >
           Профиль
         </NavLink>
 
         <NavLink
-          to="/profile/"
+          to="/profile/orders"
           className={({ isActive }) =>
-            isActive ? styles.linkActive : styles.link
+            `${styles.link} text text_type_main-default ${
+              isActive ? styles.linkActive : ""
+            }`
           }
         >
           История заказов
@@ -70,6 +74,7 @@ export function ProfilePage() {
           htmlType="button"
           type="secondary"
           size="medium"
+          extraClass={styles.logoutButton}
           onClick={() => dispatch(logoutUser())}
         >
           Выйти

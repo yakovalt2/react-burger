@@ -29,7 +29,7 @@ export function ForgotPasswordPage() {
   return (
     <div className={styles.container}>
       <form className={styles.form} onSubmit={handleSubmit}>
-        <h1 className={styles.title}>Восстановление пароля</h1>
+        <h1 className='text text_type_main-large'>Восстановление пароля</h1>
 
         <Input
           type="email"
@@ -43,7 +43,7 @@ export function ForgotPasswordPage() {
 
         <Button htmlType="submit">Восстановить</Button>
 
-        <p className={styles.text}>
+        <p className='text text_type_main-default'>
           Вспомнили пароль? <a href="/login">Войти</a>
         </p>
       </form>

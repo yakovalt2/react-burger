@@ -30,7 +30,7 @@ export function ResetPasswordPage() {
   return (
     <div className={styles.container}>
       <form className={styles.form} onSubmit={handleSubmit}>
-        <h1 className={styles.title}>Введите новый пароль</h1>
+        <h1 className='text text_type_main-large'>Введите новый пароль</h1>
 
         <Input
           type="password"
@@ -54,7 +54,7 @@ export function ResetPasswordPage() {
 
         <Button htmlType="submit">Сохранить</Button>
 
-        <p className={styles.text}>
+        <p className='text text_type_main-default'>
           Вспомнили пароль? <a href="/login">Войти</a>
         </p>
       </form>

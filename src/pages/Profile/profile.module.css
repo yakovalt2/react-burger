@@ -20,6 +20,7 @@
 }
 
 .linkActive {
+  text-decoration: none;
   color: #f2f2f3;
 }
 
@@ -34,4 +35,10 @@
   display: flex;
   gap: 20px;
   margin-top: 20px;
+}
+
+.logoutButton {
+  text-align: left;
+  padding-left: 0; 
+  color: #8585ad;
 }
