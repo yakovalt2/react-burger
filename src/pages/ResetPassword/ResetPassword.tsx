@@ -5,7 +5,7 @@ import {
   Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { request } from "../../utils/request";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAppDispatch } from "../../services/store";
 import { denyResetPassword } from "../../services/slices/resetPasswordSlice";
 
@@ -58,8 +58,8 @@ export function ResetPasswordPage() {
 
         <Button htmlType="submit">Сохранить</Button>
 
-        <p className='text text_type_main-default'>
-          Вспомнили пароль? <a href="/login">Войти</a>
+        <p className="text text_type_main-default">
+          Вспомнили пароль? <Link to="/login">Войти</Link>
         </p>
       </form>
     </div>

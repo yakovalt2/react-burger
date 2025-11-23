@@ -5,7 +5,7 @@ import {
   Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { request } from "../../utils/request";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAppDispatch } from "../../services/store";
 import { allowResetPassword } from "../../services/slices/resetPasswordSlice";
 
@@ -33,7 +33,7 @@ export function ForgotPasswordPage() {
   return (
     <div className={styles.container}>
       <form className={styles.form} onSubmit={handleSubmit}>
-        <h1 className='text text_type_main-large'>Восстановление пароля</h1>
+        <h1 className="text text_type_main-large">Восстановление пароля</h1>
 
         <Input
           type="email"
@@ -47,8 +47,8 @@ export function ForgotPasswordPage() {
 
         <Button htmlType="submit">Восстановить</Button>
 
-        <p className='text text_type_main-default'>
-          Вспомнили пароль? <a href="/login">Войти</a>
+        <p className="text text_type_main-default">
+          Вспомнили пароль? <Link to="/login">Войти</Link>
         </p>
       </form>
     </div>
