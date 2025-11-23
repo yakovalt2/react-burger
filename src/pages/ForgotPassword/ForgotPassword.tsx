@@ -6,10 +6,13 @@ import {
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { request } from "../../utils/request";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../services/store";
+import { allowResetPassword } from "../../services/slices/resetPasswordSlice";
 
 export function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +24,7 @@ export function ForgotPasswordPage() {
     })
       .then((data) => {
         console.log("Успех /password-reset:", data);
+        dispatch(allowResetPassword());
         navigate("/reset-password");
       })
       .catch((err) => console.error("Ошибка:", err));

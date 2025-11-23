@@ -3,8 +3,8 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAppSelector } from "../../services/store";
 
 interface ProtectedRouteProps {
-  onlyUnAuth?: boolean; 
-  requireForgotPassword?: boolean; 
+  onlyUnAuth?: boolean;
+  requireForgotPassword?: boolean;
 }
 
 export const ProtectedRouteElement: React.FC<ProtectedRouteProps> = ({
@@ -15,7 +15,9 @@ export const ProtectedRouteElement: React.FC<ProtectedRouteProps> = ({
   const location = useLocation();
   const forgotPasswordEmail = sessionStorage.getItem("forgotPasswordEmail");
 
-  if (requireForgotPassword && !forgotPasswordEmail) {
+  const canReset = useAppSelector((state) => state.resetPassword.canReset);
+
+  if (requireForgotPassword && !canReset) {
     return <Navigate to="/forgot-password" replace />;
   }
 

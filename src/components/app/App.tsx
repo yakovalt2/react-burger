@@ -63,16 +63,27 @@ function App() {
       <AppHeader />
       <main className={styles.main}>
         <Routes location={background || location}>
-          <Route path="/" element={
-            <>
-              <BurgerIngredients ingredients={ingredients} />
-              <BurgerConstructor ingredients={ingredients} />
-            </>
-          } />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route
+            path="/"
+            element={
+              <>
+                <BurgerIngredients ingredients={ingredients} />
+                <BurgerConstructor ingredients={ingredients} />
+              </>
+            }
+          />
+
+          <Route element={<ProtectedRouteElement onlyUnAuth />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          </Route>
+
+          <Route
+            element={<ProtectedRouteElement onlyUnAuth requireForgotPassword />}
+          >
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+          </Route>
 
           <Route element={<ProtectedRouteElement />}>
             <Route path="/profile/*" element={<ProfilePage />} />
