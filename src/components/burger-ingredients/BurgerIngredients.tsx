@@ -9,12 +9,16 @@ import { TIngredient } from "../../utils/types";
 import Modal from "../modal/Modal";
 import IngredientDetails from "../ingredient-details/IngredientDetails";
 import { useDrag } from "react-dnd";
+import { useNavigate, useLocation } from "react-router-dom";
 
 type Props = {
   ingredients: TIngredient[];
 };
 
 const BurgerIngredients: React.FC<Props> = ({ ingredients }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [current, setCurrent] = useState("bun");
   const [selectedIngredient, setSelectedIngredient] =
     useState<TIngredient | null>(null);
@@ -68,18 +72,38 @@ const BurgerIngredients: React.FC<Props> = ({ ingredients }) => {
     sectionRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleIngredientClick = (ingredient: TIngredient) => {
+    navigate(`/ingredients/${ingredient._id}`, {
+      state: { background: location },
+    });
+  };
+
   return (
     <section className={styles.burgerIngredients}>
-      <h1 className={`${styles.title} text text_type_main-large`}>Соберите бургер</h1>
+      <h1 className={`${styles.title} text text_type_main-large`}>
+        Соберите бургер
+      </h1>
 
       <div className={styles.tabs}>
-        <Tab value="bun" active={current === "bun"} onClick={() => handleTabClick("bun")}>
+        <Tab
+          value="bun"
+          active={current === "bun"}
+          onClick={() => handleTabClick("bun")}
+        >
           Булки
         </Tab>
-        <Tab value="sauce" active={current === "sauce"} onClick={() => handleTabClick("sauce")}>
+        <Tab
+          value="sauce"
+          active={current === "sauce"}
+          onClick={() => handleTabClick("sauce")}
+        >
           Соусы
         </Tab>
-        <Tab value="main" active={current === "main"} onClick={() => handleTabClick("main")}>
+        <Tab
+          value="main"
+          active={current === "main"}
+          onClick={() => handleTabClick("main")}
+        >
           Начинки
         </Tab>
       </div>
@@ -89,21 +113,21 @@ const BurgerIngredients: React.FC<Props> = ({ ingredients }) => {
           <IngredientGroup
             title="Булки"
             items={buns}
-            onClick={setSelectedIngredient}
+            onClick={handleIngredientClick}
           />
         </div>
         <div ref={sauceRef}>
           <IngredientGroup
             title="Соусы"
             items={sauces}
-            onClick={setSelectedIngredient}
+            onClick={handleIngredientClick}
           />
         </div>
         <div ref={mainRef}>
           <IngredientGroup
             title="Начинки"
             items={mains}
-            onClick={setSelectedIngredient}
+            onClick={handleIngredientClick}
           />
         </div>
       </div>
@@ -128,10 +152,12 @@ type GroupProps = {
 
 const IngredientGroup: React.FC<GroupProps> = ({ title, items, onClick }) => (
   <div className={styles.group}>
-   <h2 className={`${styles.groupTitle} text text_type_main-medium`}>{title}</h2>
+    <h2 className={`${styles.groupTitle} text text_type_main-medium`}>
+      {title}
+    </h2>
     <div className={styles.grid}>
       {items.map((item) => {
-        const count = (item as any).count ?? 0; 
+        const count = (item as any).count ?? 0;
         return (
           <IngredientCard
             key={item._id}
@@ -152,13 +178,16 @@ type CardProps = {
 };
 
 const IngredientCard: React.FC<CardProps> = ({ item, count = 0, onClick }) => {
-  const [, dragRef] = useDrag(() => ({
-    type: 'ingredient',
-    item: { ...item },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
+  const [, dragRef] = useDrag(
+    () => ({
+      type: "ingredient",
+      item: { ...item },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
     }),
-  }), [item]);
+    [item]
+  );
 
   return (
     <div
@@ -167,18 +196,18 @@ const IngredientCard: React.FC<CardProps> = ({ item, count = 0, onClick }) => {
       onClick={() => onClick(item)}
     >
       {count > 0 && (
-        <Counter
-          count={count}
-          size="default"
-          extraClass={styles.counter}
-        />
+        <Counter count={count} size="default" extraClass={styles.counter} />
       )}
       <img src={item.image} alt={item.name} className={styles.image} />
-      <div className={styles.price }>
-        <span className={`${styles.priceValue} text text_type_digits-medium`}>{item.price}</span>
+      <div className={styles.price}>
+        <span className={`${styles.priceValue} text text_type_digits-medium`}>
+          {item.price}
+        </span>
         <CurrencyIcon type="primary" />
       </div>
-      <p className={`${styles.name} text text_type_main-default`}>{item.name}</p>
+      <p className={`${styles.name} text text_type_main-default`}>
+        {item.name}
+      </p>
     </div>
   );
 };

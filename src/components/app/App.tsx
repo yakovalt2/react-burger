@@ -7,32 +7,41 @@ import { useAppDispatch, useAppSelector } from "../../services/store";
 import { fetchIngredients } from "../../services/slices/IngredientsSlice";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { getUser, setAuthChecked } from "../../services/slices/authSlice";
+import { useLocation, useNavigate } from "react-router-dom";
+import Modal from "../modal/Modal";
+import IngredientDetails from "../ingredient-details/IngredientDetails";
 
 import { LoginPage } from "../../pages/LoginPage/LoginPage";
 import { RegisterPage } from "../../pages/RegisterPage/RegisterPage";
 import { ForgotPasswordPage } from "../../pages/ForgotPassword/ForgotPassword";
 import { ResetPasswordPage } from "../../pages/ResetPassword/ResetPassword";
 import { ProfilePage } from "../../pages/Profile/Profile";
+import IngredientPage from "../../pages/IngredientPage/IngredientPage";
 
 import { ProtectedRouteElement } from "../../components/routes/ProtectedRouteElement";
 
 function App() {
   const dispatch = useAppDispatch();
 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const state = location.state as { background?: Location };
+  const background = state?.background;
+
   const { items: ingredients, status } = useAppSelector((s) => s.ingredients);
   const auth = useAppSelector((s) => s.auth);
 
   useEffect(() => {
-  const init = async () => {
-    try {
-      await dispatch(getUser() as any); 
-    } finally {
-      dispatch(setAuthChecked()); 
-    }
-  };
+    const init = async () => {
+      try {
+        await dispatch(getUser() as any);
+      } finally {
+        dispatch(setAuthChecked());
+      }
+    };
 
-  init();
-}, [dispatch]);
+    init();
+  }, [dispatch]);
 
   useEffect(() => {
     if (auth.isAuthChecked) {
@@ -49,35 +58,58 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
-      <div className={styles.app}>
-        <AppHeader />
-        <main className={styles.main}>
+    <div className={styles.app}>
+      <AppHeader />
+      <main className={styles.main}>
+        <Routes location={background || location}>
+          <Route element={<ProtectedRouteElement onlyUnAuth />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+          </Route>
+
+          <Route element={<ProtectedRouteElement />}>
+            <Route path="/profile/*" element={<ProfilePage />} />
+          </Route>
+
+          <Route
+            path="/"
+            element={
+              <>
+                <BurgerIngredients ingredients={ingredients} />
+                <BurgerConstructor ingredients={ingredients} />
+              </>
+            }
+          />
+        </Routes>
+
+        {background ? (
           <Routes>
-            <Route element={<ProtectedRouteElement onlyUnAuth />}>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-              <Route path="/reset-password" element={<ResetPasswordPage />} />
-            </Route>
-
-            <Route element={<ProtectedRouteElement />}>
-              <Route path="/profile/*" element={<ProfilePage />} />
-            </Route>
-
             <Route
-              path="/"
-              element={
-                <>
-                  <BurgerIngredients ingredients={ingredients} />
-                  <BurgerConstructor ingredients={ingredients} />
-                </>
-              }
+              path="/ingredients/:id"
+              element={(() => {
+                const ingredient = ingredients.find(
+                  (i) => i._id === location.pathname.split("/")[2]
+                );
+                if (!ingredient)
+                  return <p>Ингредиент не найден или загрузка...</p>;
+
+                return (
+                  <Modal onClose={() => navigate(-1)}>
+                    <IngredientDetails ingredient={ingredient} />
+                  </Modal>
+                );
+              })()}
             />
           </Routes>
-        </main>
-      </div>
-    </BrowserRouter>
+        ) : (
+          <Routes>
+            <Route path="/ingredients/:id" element={<IngredientPage />} />
+          </Routes>
+        )}
+      </main>
+    </div>
   );
 }
 
