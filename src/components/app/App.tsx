@@ -1,13 +1,12 @@
 import React, { useEffect } from "react";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import AppHeader from "../app-header/AppHeader";
 import styles from "./App.module.css";
 import BurgerIngredients from "../burger-ingredients/BurgerIngredients";
 import BurgerConstructor from "../burger-constructor/BurgerConstructor";
 import { useAppDispatch, useAppSelector } from "../../services/store";
 import { fetchIngredients } from "../../services/slices/IngredientsSlice";
-import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { getUser, setAuthChecked } from "../../services/slices/authSlice";
-import { useLocation, useNavigate } from "react-router-dom";
 import Modal from "../modal/Modal";
 import IngredientDetails from "../ingredient-details/IngredientDetails";
 
@@ -22,9 +21,9 @@ import { ProtectedRouteElement } from "../../components/routes/ProtectedRouteEle
 
 function App() {
   const dispatch = useAppDispatch();
-
   const location = useLocation();
   const navigate = useNavigate();
+
   const state = location.state as { background?: Location };
   const background = state?.background;
 
@@ -39,7 +38,6 @@ function App() {
         dispatch(setAuthChecked());
       }
     };
-
     init();
   }, [dispatch]);
 
@@ -57,56 +55,36 @@ function App() {
     return <p>Загрузка ингредиентов...</p>;
   }
 
+  const ingredientId = location.pathname.split("/")[2];
+  const ingredient = ingredients.find((i) => i._id === ingredientId);
+
   return (
     <div className={styles.app}>
       <AppHeader />
       <main className={styles.main}>
         <Routes location={background || location}>
-          <Route element={<ProtectedRouteElement onlyUnAuth />}>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-          </Route>
+          <Route path="/" element={
+            <>
+              <BurgerIngredients ingredients={ingredients} />
+              <BurgerConstructor ingredients={ingredients} />
+            </>
+          } />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           <Route element={<ProtectedRouteElement />}>
             <Route path="/profile/*" element={<ProfilePage />} />
           </Route>
 
-          <Route
-            path="/"
-            element={
-              <>
-                <BurgerIngredients ingredients={ingredients} />
-                <BurgerConstructor ingredients={ingredients} />
-              </>
-            }
-          />
+          <Route path="/ingredients/:id" element={<IngredientPage />} />
         </Routes>
 
-        {background ? (
-          <Routes>
-            <Route
-              path="/ingredients/:id"
-              element={(() => {
-                const ingredient = ingredients.find(
-                  (i) => i._id === location.pathname.split("/")[2]
-                );
-                if (!ingredient)
-                  return <p>Ингредиент не найден или загрузка...</p>;
-
-                return (
-                  <Modal title='Детали ингредиента' onClose={() => navigate(-1)}>
-                    <IngredientDetails ingredient={ingredient} />
-                  </Modal>
-                );
-              })()}
-            />
-          </Routes>
-        ) : (
-          <Routes>
-            <Route path="/ingredients/:id" element={<IngredientPage />} />
-          </Routes>
+        {background && ingredient && (
+          <Modal title="Детали ингредиента" onClose={() => navigate(-1)}>
+            <IngredientDetails ingredient={ingredient} />
+          </Modal>
         )}
       </main>
     </div>
