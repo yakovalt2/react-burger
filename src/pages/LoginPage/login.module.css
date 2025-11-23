@@ -1,0 +1,23 @@
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 88px); 
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 480px;
+  gap: 20px;
+}
+
+.center {
+  text-align: center;
+}
+
+.textRow {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
