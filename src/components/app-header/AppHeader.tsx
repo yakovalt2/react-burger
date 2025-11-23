@@ -15,7 +15,6 @@ const AppHeader: React.FC = () => {
   return (
     <header className={styles.header}>
       <nav className={styles.nav}>
-
         <div className={styles.left}>
           <NavLink
             to="/"
@@ -45,33 +44,16 @@ const AppHeader: React.FC = () => {
         </div>
 
         <div className={styles.right}>
-          {user ? (
-            <NavLink
-              to="/profile"
-              className={({ isActive }) =>
-                `${styles.link} ${isActive ? styles.active : ""}`
-              }
-            >
-              <ProfileIcon type="primary" />
-              <p className="text text_type_main-default ml-2">
-                Личный кабинет
-              </p>
-            </NavLink>
-          ) : (
-            <NavLink
-              to="/login"
-              className={({ isActive }) =>
-                `${styles.link} ${isActive ? styles.active : ""}`
-              }
-            >
-              <ProfileIcon type="secondary" />
-              <p className="text text_type_main-default ml-2 text_color_inactive">
-                Войти
-              </p>
-            </NavLink>
-          )}
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              `${styles.link} ${isActive ? styles.active : ""}`
+            }
+          >
+            <ProfileIcon type="primary" />
+            <p className="text text_type_main-default ml-2">Личный кабинет</p>
+          </NavLink>
         </div>
-
       </nav>
     </header>
   );

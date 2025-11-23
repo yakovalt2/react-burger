@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from "./login.module.css";
 import { useAppDispatch } from "../../services/store";
 import { loginUser } from "../../services/slices/authSlice";
+import { useLocation } from "react-router-dom";
 
 export function LoginPage() {
   const [email, setEmail] = useState("");
@@ -14,8 +15,11 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const location = useLocation();
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const from = (location.state as { from?: Location })?.from?.pathname || "/";
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,7 +28,7 @@ export function LoginPage() {
 
     try {
       const result = await dispatch(loginUser({ email, password })).unwrap();
-      navigate("/");
+      navigate(from, { replace: true });
     } catch (err: any) {
       console.error("Ошибка входа:", err);
       setError(err);
