@@ -42,3 +42,9 @@
   padding-left: 0; 
   color: #8585ad;
 }
+
+.buttonGroup {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}

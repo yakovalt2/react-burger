@@ -134,8 +134,7 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
     return (
       <li
         ref={ref}
-        className={styles.item}
-        style={{ opacity: isDragging ? 0.5 : 1 }}
+        className={`${styles.item} ${isDragging ? styles.itemDragging : ""}`}
         key={item.uid ?? item._id}
       >
         <DragIcon type="primary" />
@@ -241,11 +240,7 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
         </Button>
       </div>
 
-      {error && (
-        <p style={{ color: "red", textAlign: "center", marginTop: "10px" }}>
-          {error}
-        </p>
-      )}
+      {error && <p className={styles.error}>{error}</p>}
 
       {isOrderOpen && orderNumber && (
         <Modal onClose={() => setIsOrderOpen(false)}>

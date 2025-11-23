@@ -112,7 +112,7 @@ export function ProfilePage() {
           onPointerLeaveCapture={() => {}}
         />
 
-        <div style={{ display: "flex", gap: 16, marginTop: 8 }}>
+        <div className={styles.buttonGroup}>
           <Button
             htmlType="button"
             type="primary"
