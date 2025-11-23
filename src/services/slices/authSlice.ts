@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { request } from "../../utils/request";
+import { setCookie, deleteCookie } from "../../utils/cookie";
 
 interface User {
   email: string;
@@ -24,16 +25,22 @@ const initialState: AuthState = {
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
-  async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
+  async (
+    { email, password }: { email: string; password: string },
+    { rejectWithValue }
+  ) => {
     try {
-      const data = await request<{ success: boolean; user: User; accessToken: string; refreshToken: string }>(
-        "auth/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const data = await request<{
+        success: boolean;
+        user: User;
+        accessToken: string;
+        refreshToken: string;
+      }>("auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      setCookie("token", data.accessToken, { path: "/", expires: 3600 });
       localStorage.setItem("refreshToken", data.refreshToken);
       return data;
     } catch (err: any) {
@@ -44,17 +51,51 @@ export const loginUser = createAsyncThunk(
 
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
-  async ({ email, password, name }: { email: string; password: string; name: string }, { rejectWithValue }) => {
+  async (
+    {
+      email,
+      password,
+      name,
+    }: { email: string; password: string; name: string },
+    { rejectWithValue }
+  ) => {
     try {
-      const data = await request<{ success: boolean; user: User; accessToken: string; refreshToken: string }>(
-        "auth/register",
+      const data = await request<{
+        success: boolean;
+        user: User;
+        accessToken: string;
+        refreshToken: string;
+      }>("auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, name }),
+      });
+      setCookie("token", data.accessToken, { path: "/", expires: 3600 });
+      localStorage.setItem("refreshToken", data.refreshToken);
+      return data;
+    } catch (err: any) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const logoutUser = createAsyncThunk(
+  "auth/logoutUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("refreshToken");
+      if (!token) throw new Error("Нет refreshToken");
+
+      const data = await request<{ success: boolean; message: string }>(
+        "auth/logout",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password, name }),
+          body: JSON.stringify({ token }),
         }
       );
-      localStorage.setItem("refreshToken", data.refreshToken);
+
+      localStorage.removeItem("refreshToken");
       return data;
     } catch (err: any) {
       return rejectWithValue(err.message);
@@ -69,16 +110,20 @@ export const refreshToken = createAsyncThunk(
       const token = localStorage.getItem("refreshToken");
       if (!token) throw new Error("Нет refreshToken");
 
-      const data = await request<{ success: boolean; accessToken: string; refreshToken: string }>(
-        "auth/token",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token }),
-        }
-      );
+      const data = await request<{
+        success: boolean;
+        accessToken: string;
+        refreshToken: string;
+      }>("auth/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
       localStorage.setItem("refreshToken", data.refreshToken);
-      return data.accessToken;
+      return {
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      };
     } catch (err: any) {
       return rejectWithValue(err.message);
     }
@@ -93,6 +138,7 @@ const authSlice = createSlice({
       state.user = null;
       state.accessToken = null;
       state.refreshToken = null;
+      deleteCookie("token");
       localStorage.removeItem("refreshToken");
     },
   },
@@ -113,8 +159,25 @@ const authSlice = createSlice({
         state.refreshToken = action.payload.refreshToken;
         state.error = null;
       })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.user = null;
+        state.accessToken = null;
+        state.refreshToken = null;
+        state.error = null;
+        deleteCookie("token");
+        localStorage.removeItem("refreshToken");
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.error = action.payload as string;
+      })
       .addCase(refreshToken.fulfilled, (state, action) => {
-        state.accessToken = action.payload;
+        state.accessToken = action.payload.accessToken;
+        state.refreshToken = action.payload.refreshToken;
+        setCookie("token", action.payload.accessToken, {
+          path: "/",
+          expires: new Date(Date.now() + 3600 * 1000),
+        });
+        localStorage.setItem("refreshToken", action.payload.refreshToken);
       })
       .addCase(refreshToken.rejected, (state, action) => {
         state.user = null;

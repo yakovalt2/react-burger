@@ -1,12 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import styles from "./profile.module.css";
-import { Input, Button } from "@ya.praktikum/react-developer-burger-ui-components";
+import {
+  Input,
+  Button,
+} from "@ya.praktikum/react-developer-burger-ui-components";
+import { useAppDispatch } from "../../services/store";
+import { logoutUser } from "../../services/slices/authSlice";
+import { useAppSelector } from "../../services/store";
 
 export function ProfilePage() {
   const [name, setName] = useState("Имя");
   const [email, setEmail] = useState("email@example.com");
   const [password, setPassword] = useState("");
+
+  const dispatch = useAppDispatch();
+
+  const auth = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    console.log("Текущее состояние пользователя:", auth.user);
+    console.log("AccessToken:", auth.accessToken);
+    console.log("RefreshToken в localStorage:", localStorage.getItem("refreshToken"));
+  }, [auth.user, auth.accessToken]);
 
   return (
     <div className={styles.wrapper}>
@@ -14,19 +30,30 @@ export function ProfilePage() {
         <NavLink
           to="/profile"
           end
-          className={({ isActive }) => (isActive ? styles.linkActive : styles.link)}
+          className={({ isActive }) =>
+            isActive ? styles.linkActive : styles.link
+          }
         >
           Профиль
         </NavLink>
 
         <NavLink
           to="/profile/"
-          className={({ isActive }) => (isActive ? styles.linkActive : styles.link)}
+          className={({ isActive }) =>
+            isActive ? styles.linkActive : styles.link
+          }
         >
           История заказов
         </NavLink>
 
-        <p className={styles.link}>Выход</p>
+        <Button
+          htmlType="button"
+          type="secondary"
+          size="medium"
+          onClick={() => dispatch(logoutUser())}
+        >
+          Выйти
+        </Button>
       </nav>
 
       <div className={styles.content}>
