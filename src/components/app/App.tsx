@@ -96,7 +96,7 @@ function App() {
                   return <p>Ингредиент не найден или загрузка...</p>;
 
                 return (
-                  <Modal onClose={() => navigate(-1)}>
+                  <Modal title='Детали ингредиента' onClose={() => navigate(-1)}>
                     <IngredientDetails ingredient={ingredient} />
                   </Modal>
                 );
