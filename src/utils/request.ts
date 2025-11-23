@@ -1,4 +1,4 @@
-import { API_URL } from "./constants";
+export const BASE_URL = "https://norma.education-services.ru/api/";
 interface ApiResponse {
   success?: boolean;
   [key: string]: any;
@@ -23,7 +23,7 @@ export const request = async <T extends ApiResponse>(
   endpoint: string,
   options?: RequestInit
 ): Promise<T> => {
-  const res = await fetch(`${API_URL}${endpoint}`, options);
+  const res = await fetch(`${BASE_URL}${endpoint}`, options);
   const data = await checkResponse<T>(res);
   return checkSuccess(data);
 };
