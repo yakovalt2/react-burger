@@ -5,20 +5,23 @@ import {
   Button,
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import { request } from "../../utils/request";
+import { useNavigate } from "react-router-dom";
 
 export function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    request("/password-reset", {
+    request("password-reset", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     })
       .then((data) => {
         console.log("Успех /password-reset:", data);
+        navigate("/reset-password");
       })
       .catch((err) => console.error("Ошибка:", err));
   };
