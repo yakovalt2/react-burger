@@ -25,11 +25,7 @@ import {
 import { request } from "../../utils/request";
 import { useLocation, useNavigate } from "react-router-dom";
 
-type Props = {
-  ingredients?: TIngredient[];
-};
-
-const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
+const BurgerConstructor: React.FC = () => {
   const dispatch = useAppDispatch();
   const constructor = useAppSelector((state) => state.burgerConstructor);
 

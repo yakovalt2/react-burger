@@ -67,8 +67,8 @@ function App() {
             path="/"
             element={
               <>
-                <BurgerIngredients ingredients={ingredients} />
-                <BurgerConstructor ingredients={ingredients} />
+                <BurgerIngredients />
+                <BurgerConstructor />
               </>
             }
           />

@@ -10,18 +10,17 @@ import Modal from "../modal/Modal";
 import IngredientDetails from "../ingredient-details/IngredientDetails";
 import { useDrag } from "react-dnd";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAppSelector } from "../../services/store";
 
-type Props = {
-  ingredients: TIngredient[];
-};
-
-const BurgerIngredients: React.FC<Props> = ({ ingredients }) => {
+const BurgerIngredients: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [current, setCurrent] = useState("bun");
   const [selectedIngredient, setSelectedIngredient] =
     useState<TIngredient | null>(null);
+
+  const ingredients = useAppSelector((state) => state.ingredients.items);
 
   const buns = ingredients.filter((item) => item.type === "bun");
   const sauces = ingredients.filter((item) => item.type === "sauce");
