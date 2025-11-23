@@ -13,6 +13,7 @@ interface AuthState {
   refreshToken: string | null;
   loading: boolean;
   error: string | null;
+  isAuthChecked: boolean;
 }
 
 const initialState: AuthState = {
@@ -21,6 +22,7 @@ const initialState: AuthState = {
   refreshToken: null,
   loading: false,
   error: null,
+  isAuthChecked: false,
 };
 
 export const loginUser = createAsyncThunk(
@@ -204,6 +206,9 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    setAuthChecked(state) {
+      state.isAuthChecked = true;
+    },
     logout: (state) => {
       state.user = null;
       state.accessToken = null;
@@ -214,6 +219,9 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(refreshToken.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
@@ -253,13 +261,16 @@ const authSlice = createSlice({
         state.user = null;
         state.accessToken = null;
         state.refreshToken = null;
+        state.isAuthChecked = true;
         state.error = action.payload as string;
       })
       .addCase(getUser.fulfilled, (state, action) => {
         state.user = action.payload;
+        state.isAuthChecked = true;
       })
-      .addCase(getUser.rejected, (state, action) => {
-        state.error = action.payload as string;
+      .addCase(getUser.rejected, (state) => {
+        state.user = null;
+        state.isAuthChecked = true;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
         state.user = action.payload;
@@ -270,5 +281,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, setAuthChecked} = authSlice.actions;
 export default authSlice.reducer;
