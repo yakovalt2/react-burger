@@ -52,3 +52,20 @@
   align-items: center;
   gap: 8px;
 }
+
+.item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  transition: opacity 0.2s;
+}
+
+.itemDragging {
+  opacity: 0.5;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
+}

@@ -22,19 +22,19 @@ import {
   incrementCount,
   decrementCount,
 } from "../../services/slices/IngredientsSlice";
-import { API_URL } from "../../utils/constants";
 import { request } from "../../utils/request";
+import { useLocation, useNavigate } from "react-router-dom";
 
-type Props = {
-  ingredients?: TIngredient[];
-};
-
-const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
+const BurgerConstructor: React.FC = () => {
   const dispatch = useAppDispatch();
   const constructor = useAppSelector((state) => state.burgerConstructor);
 
   const bun = constructor.bun;
   const mains = constructor.items;
+
+  const auth = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const totalPrice = React.useMemo(() => {
     return (
@@ -130,8 +130,7 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
     return (
       <li
         ref={ref}
-        className={styles.item}
-        style={{ opacity: isDragging ? 0.5 : 1 }}
+        className={`${styles.item} ${isDragging ? styles.itemDragging : ""}`}
         key={item.uid ?? item._id}
       >
         <DragIcon type="primary" />
@@ -151,6 +150,11 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
   const [error, setError] = React.useState<string | null>(null);
 
   const handleOrderClick = async () => {
+    if (!auth.user) {
+      navigate("/login", { state: { from: location } });
+      return;
+    }
+
     if (!bun) return;
 
     const ingredientIds = [bun._id, ...mains.map((i) => i._id), bun._id];
@@ -232,11 +236,7 @@ const BurgerConstructor: React.FC<Props> = ({ ingredients }) => {
         </Button>
       </div>
 
-      {error && (
-        <p style={{ color: "red", textAlign: "center", marginTop: "10px" }}>
-          {error}
-        </p>
-      )}
+      {error && <p className={styles.error}>{error}</p>}
 
       {isOrderOpen && orderNumber && (
         <Modal onClose={() => setIsOrderOpen(false)}>

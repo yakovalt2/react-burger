@@ -15,3 +15,7 @@
   width: 100%;
   max-width: 1240px;
 }
+
+a, a.text_color_accent {
+  text-decoration: none !important;
+}
