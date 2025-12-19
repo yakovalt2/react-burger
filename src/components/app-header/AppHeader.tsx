@@ -27,7 +27,7 @@ const AppHeader: React.FC = () => {
           </NavLink>
 
           <NavLink
-            to="/"
+            to="/feed"
             className={({ isActive }) =>
               `${styles.link} ${isActive ? styles.active : ""}`
             }

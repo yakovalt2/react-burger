@@ -15,6 +15,8 @@ import { RegisterPage } from "../../pages/RegisterPage/RegisterPage";
 import { ForgotPasswordPage } from "../../pages/ForgotPassword/ForgotPassword";
 import { ResetPasswordPage } from "../../pages/ResetPassword/ResetPassword";
 import { ProfilePage } from "../../pages/Profile/Profile";
+import { FeedPage } from "../../pages/Feed/FeedPage";
+import { FeedOrderPage } from "../../pages/Feed/FeedOrderPage";
 import IngredientPage from "../../pages/IngredientPage/IngredientPage";
 
 import { ProtectedRouteElement } from "../../components/routes/ProtectedRouteElement";
@@ -72,6 +74,8 @@ function App() {
               </>
             }
           />
+          <Route path="/feed" element={<FeedPage />} />
+          <Route path="/feed/:id" element={<FeedOrderPage />} />
 
           <Route element={<ProtectedRouteElement onlyUnAuth />}>
             <Route path="/login" element={<LoginPage />} />

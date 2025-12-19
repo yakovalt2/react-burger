@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Routes, Route, Outlet } from "react-router-dom";
 import styles from "./profile.module.css";
 import {
   Input,
@@ -12,7 +12,9 @@ import {
   updateUser,
 } from "../../services/slices/authSlice";
 import { useAppSelector } from "../../services/store";
-import { getCookie } from "../../utils/cookie";
+
+import ProfileOrderPage from "./ProfileOrderPage";
+import ProfileOrdersPage from "./ProfileOrdersPage";
 
 export function ProfilePage() {
   const [name, setName] = useState("Имя");
@@ -146,6 +148,14 @@ export function ProfilePage() {
           </Button>
         </div>
       </div>
+
+       <Routes>
+        <Route index element={<div />} /> 
+        <Route path="orders" element={<ProfileOrdersPage />} />
+        <Route path="orders/:id" element={<ProfileOrderPage />} />
+      </Routes>
+
+
       <Outlet />
     </div>
   );
