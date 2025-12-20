@@ -22,9 +22,9 @@ import {
   incrementCount,
   decrementCount,
 } from "../../services/slices/IngredientsSlice";
-import { request } from "../../utils/request";
 import { useLocation, useNavigate } from "react-router-dom";
 import { API_URL } from "../../utils/constants";
+import { WS_URL } from "../../utils/constants";
 
 const BurgerConstructor: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -164,7 +164,7 @@ const BurgerConstructor: React.FC = () => {
       setIsLoading(true);
       setError(null);
 
-      const token = auth.accessToken
+      const token = auth.accessToken;
 
       const response = await fetch(`${API_URL}/orders`, {
         method: "POST",
@@ -176,12 +176,11 @@ const BurgerConstructor: React.FC = () => {
       });
 
       const ws = new WebSocket(
-        `wss://norma.education-services.ru/orders?token=${token}`
+        `${WS_URL}/orders?token=${token}`
       );
 
       ws.onmessage = (event) => {
         const message = JSON.parse(event.data);
-        console.log("Обновление заказа:", message);
       };
 
       if (!response.ok) {

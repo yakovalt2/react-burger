@@ -13,10 +13,14 @@ export default function ProfileOrdersPage() {
     return <Loader />;
   }
 
+  const sortedOrders = [...orders].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.orderList}>
-        {orders.map((order) => (
+        {sortedOrders.map((order) => (
           <OrderCard
             key={order._id}
             order={order}
