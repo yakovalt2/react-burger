@@ -20,8 +20,6 @@ export function FeedPage() {
   const doneOrders = orders.filter((o) => o.status === "done");
   const pendingOrders = orders.filter((o) => o.status !== "done");
 
-  console.log(orders);
-
   return (
     <div className={styles.wrapper}>
       <div className={styles.left}>
