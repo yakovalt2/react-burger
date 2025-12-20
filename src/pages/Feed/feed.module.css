@@ -1,0 +1,116 @@
+.wrapper {
+  width: 70%;
+  margin: 0 auto;
+  display: flex;
+  gap: 60px;
+  padding: 40px 0;
+}
+
+.left {
+  flex: 3;
+  height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.right {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.statusColumns {
+  display: flex;
+  gap: 20px;
+}
+
+.statusColumn {
+  flex: 1;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.orderNumbers {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 200px; 
+  overflow-y: auto;
+}
+
+.statFull {
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.orderList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.orderCard {
+  border-radius: 40px;
+  padding: 20px;
+  text-decoration: none;
+  color: inherit;
+  background-color: rgba(193, 193, 193, 0.084);
+}
+
+.orderName {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ingredients {
+  margin-top: 25px;
+  display: flex;
+  position: relative;
+}
+
+.ingredient {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #801ab2, #4c4cff);
+  padding: 2px;
+  margin-left: -12px;
+  box-sizing: border-box;
+}
+
+.ingredient:first-child {
+  margin-left: 0;
+}
+
+.ingredient img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #131316;
+  object-fit: cover;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between; /* слева ингредиенты, справа цена */
+  align-items: center; /* вертикальное выравнивание */
+  width: 100%; /* чтобы растягивалось по всей карточке */
+  box-sizing: border-box; /* учитываем padding родителя */
+  margin-top: 20px;
+}
+
+.price {
+  display: flex;
+}

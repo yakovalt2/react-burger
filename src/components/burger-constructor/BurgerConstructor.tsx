@@ -24,6 +24,7 @@ import {
 } from "../../services/slices/IngredientsSlice";
 import { request } from "../../utils/request";
 import { useLocation, useNavigate } from "react-router-dom";
+import { API_URL } from "../../utils/constants";
 
 const BurgerConstructor: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -163,19 +164,41 @@ const BurgerConstructor: React.FC = () => {
       setIsLoading(true);
       setError(null);
 
-      const data = await request<{
-        success: boolean;
-        order: { number: number };
-      }>("orders", {
+      const token = auth.accessToken
+
+      console.log(auth);
+
+      const response = await fetch(`${API_URL}/orders`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `${token}` } : {}),
+        },
         body: JSON.stringify({ ingredients: ingredientIds }),
       });
+
+      const ws = new WebSocket(
+        `wss://norma.education-services.ru/orders?token=${token}`
+      );
+
+      ws.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        console.log("Обновление заказа:", message);
+      };
+
+      console.log(response);
+
+      if (!response.ok) {
+        throw new Error(`Ошибка ${response.status}`);
+      }
+
+      const data: { success: boolean; order: { number: number } } =
+        await response.json();
 
       setOrderNumber(data.order.number);
       setIsOrderOpen(true);
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Ошибка оформления заказа");
       console.error("Ошибка оформления заказа:", err);
     } finally {
       setIsLoading(false);
