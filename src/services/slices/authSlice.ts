@@ -238,8 +238,6 @@ const authSlice = createSlice({
       state.user = null;
       state.accessToken = null;
       state.refreshToken = null;
-      deleteCookie("token");
-      localStorage.removeItem("refreshToken");
     },
   },
   extraReducers: (builder) => {
@@ -267,8 +265,6 @@ const authSlice = createSlice({
         state.accessToken = null;
         state.refreshToken = null;
         state.error = null;
-        deleteCookie("token");
-        localStorage.removeItem("refreshToken");
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.error = action.payload as string;
@@ -276,11 +272,6 @@ const authSlice = createSlice({
       .addCase(refreshToken.fulfilled, (state, action) => {
         state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
-        setCookie("token", action.payload.accessToken, {
-          path: "/",
-          expires: new Date(Date.now() + 3600 * 1000),
-        });
-        localStorage.setItem("refreshToken", action.payload.refreshToken);
       })
       .addCase(refreshToken.rejected, (state, action) => {
         state.user = null;
