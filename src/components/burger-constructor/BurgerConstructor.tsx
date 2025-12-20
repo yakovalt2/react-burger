@@ -8,7 +8,7 @@ import {
 import { TIngredient } from "../../utils/types";
 import React, { useRef } from "react";
 import Modal from "../modal/Modal";
-import OrderDetails from "../order-details/OrderDetails";
+import OrderDetails from "../order-confirmation/OrderConfirmation";
 import { useDrop, useDrag, DropTargetMonitor } from "react-dnd";
 import { XYCoord } from "dnd-core";
 import { useAppDispatch, useAppSelector } from "../../services/store";
@@ -166,8 +166,6 @@ const BurgerConstructor: React.FC = () => {
 
       const token = auth.accessToken
 
-      console.log(auth);
-
       const response = await fetch(`${API_URL}/orders`, {
         method: "POST",
         headers: {
@@ -185,8 +183,6 @@ const BurgerConstructor: React.FC = () => {
         const message = JSON.parse(event.data);
         console.log("Обновление заказа:", message);
       };
-
-      console.log(response);
 
       if (!response.ok) {
         throw new Error(`Ошибка ${response.status}`);

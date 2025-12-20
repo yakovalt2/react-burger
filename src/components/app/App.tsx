@@ -17,20 +17,27 @@ import { ResetPasswordPage } from "../../pages/ResetPassword/ResetPassword";
 import { ProfilePage } from "../../pages/Profile/Profile";
 import { FeedPage } from "../../pages/Feed/FeedPage";
 import { FeedOrderPage } from "../../pages/Feed/FeedOrderPage";
+import { ProfileForm } from "../../pages/Profile/ProfileForm";
+import ProfileOrderPage from "../../pages/Profile/ProfileOrderPage";
+import ProfileOrdersPage from "../../pages/Profile/ProfileOrdersPage";
 import IngredientPage from "../../pages/IngredientPage/IngredientPage";
+import { OrderModal } from "../modal/OrderModal";
+import { OrderDetails } from "../order-details/OrderDetails";
 
 import { ProtectedRouteElement } from "../../components/routes/ProtectedRouteElement";
+
+import { useOrders } from "../../services/useOrders";
 
 function App() {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const state = location.state as { background?: Location };
-  const background = state?.background;
+  const background = (location.state as { background?: Location })?.background;
 
   const { items: ingredients, status } = useAppSelector((s) => s.ingredients);
   const auth = useAppSelector((s) => s.auth);
+  const { orders } = useOrders(ingredients);
 
   useEffect(() => {
     const init = async () => {
@@ -59,6 +66,9 @@ function App() {
 
   const ingredientId = location.pathname.split("/")[2];
   const ingredient = ingredients.find((i) => i._id === ingredientId);
+
+  const orderId = location.pathname.split("/")[2];
+  const order = orders.find((o) => o._id === orderId);
 
   return (
     <div className={styles.app}>
@@ -90,7 +100,11 @@ function App() {
           </Route>
 
           <Route element={<ProtectedRouteElement />}>
-            <Route path="/profile/*" element={<ProfilePage />} />
+            <Route path="/profile" element={<ProfilePage />}>
+              <Route index element={<ProfileForm />} />
+              <Route path="orders" element={<ProfileOrdersPage />} />
+              <Route path="orders/:id" element={<ProfileOrderPage />} />
+            </Route>
           </Route>
 
           <Route path="/ingredients/:id" element={<IngredientPage />} />
@@ -99,6 +113,17 @@ function App() {
         {background && ingredient && (
           <Modal title="Детали ингредиента" onClose={() => navigate(-1)}>
             <IngredientDetails ingredient={ingredient} />
+          </Modal>
+        )}
+
+        {background && location.pathname.startsWith("/feed/") && order && (
+          <Modal
+            title={
+              <p className="text text_type_digits-default">#{order.number}</p>
+            }
+            onClose={() => navigate(-1)}
+          >
+            <OrderDetails order={order} />
           </Modal>
         )}
       </main>

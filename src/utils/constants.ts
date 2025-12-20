@@ -1,2 +1,2 @@
 export const API_URL = 'https://norma.education-services.ru/api';
-export const WS_URL = 'wss://norma.education-services.ru/orders/all';
+export const WS_URL = 'wss://norma.education-services.ru'

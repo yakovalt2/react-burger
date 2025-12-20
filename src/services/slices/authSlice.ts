@@ -44,6 +44,7 @@ export const loginUser = createAsyncThunk(
       });
       setCookie("token", data.accessToken, { path: "/", expires: 3600 });
       localStorage.setItem("refreshToken", data.refreshToken);
+      localStorage.setItem("accessToken", data.accessToken);
       return data;
     } catch (err: any) {
       return rejectWithValue(err.message);
