@@ -175,9 +175,7 @@ const BurgerConstructor: React.FC = () => {
         body: JSON.stringify({ ingredients: ingredientIds }),
       });
 
-      const ws = new WebSocket(
-        `${WS_URL}/orders?token=${token}`
-      );
+      const ws = new WebSocket(`${WS_URL}/orders?token=${token}`);
 
       ws.onmessage = (event) => {
         const message = JSON.parse(event.data);
@@ -192,9 +190,14 @@ const BurgerConstructor: React.FC = () => {
 
       setOrderNumber(data.order.number);
       setIsOrderOpen(true);
-    } catch (err: any) {
-      setError(err.message || "Ошибка оформления заказа");
-      console.error("Ошибка оформления заказа:", err);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+        console.error("Ошибка оформления заказа:", err);
+      } else {
+        setError("Ошибка оформления заказа");
+        console.error("Неизвестная ошибка:", err);
+      }
     } finally {
       setIsLoading(false);
     }

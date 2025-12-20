@@ -46,8 +46,12 @@ export const loginUser = createAsyncThunk(
       localStorage.setItem("refreshToken", data.refreshToken);
       localStorage.setItem("accessToken", data.accessToken);
       return data;
-    } catch (err: any) {
-      return rejectWithValue(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+
+      return rejectWithValue("Неизвестная ошибка");
     }
   }
 );
@@ -76,8 +80,12 @@ export const registerUser = createAsyncThunk(
       setCookie("token", data.accessToken, { path: "/", expires: 3600 });
       localStorage.setItem("refreshToken", data.refreshToken);
       return data;
-    } catch (err: any) {
-      return rejectWithValue(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+
+      return rejectWithValue("Неизвестная ошибка");
     }
   }
 );
@@ -100,8 +108,12 @@ export const logoutUser = createAsyncThunk(
 
       localStorage.removeItem("refreshToken");
       return data;
-    } catch (err: any) {
-      return rejectWithValue(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+
+      return rejectWithValue("Неизвестная ошибка");
     }
   }
 );
@@ -127,8 +139,12 @@ export const refreshToken = createAsyncThunk(
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
       };
-    } catch (err: any) {
-      return rejectWithValue(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+
+      return rejectWithValue("Неизвестная ошибка");
     }
   }
 );
@@ -158,8 +174,12 @@ export const getUser = createAsyncThunk(
       );
 
       return data.user;
-    } catch (err: any) {
-      return rejectWithValue(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+
+      return rejectWithValue("Неизвестная ошибка");
     }
   }
 );
@@ -197,8 +217,12 @@ export const updateUser = createAsyncThunk(
       );
 
       return data.user;
-    } catch (err: any) {
-      return rejectWithValue(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+
+      return rejectWithValue("Неизвестная ошибка");
     }
   }
 );
@@ -282,5 +306,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, setAuthChecked} = authSlice.actions;
+export const { logout, setAuthChecked } = authSlice.actions;
 export default authSlice.reducer;
