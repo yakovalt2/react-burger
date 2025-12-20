@@ -1,9 +1,10 @@
 import { TOrder } from "../../utils/types";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from "./order-card.module.css";
 import { TIngredient } from "../../utils/types";
 import formatOrderDate from "../../utils/formatOrderDate";
+import { useLocation } from "react-router-dom";
 
 interface OrderCardProps {
   order: TOrder & { ingredientsData: TIngredient[]; totalPrice: number };

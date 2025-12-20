@@ -8,7 +8,7 @@ type Props = {
   orderId: string;
 };
 
-export const FeedOrderPage = () => {
+export const OrderPage: React.FC = () => {
   const { id } = useParams();
   const { items: ingredients } = useAppSelector((state) => state.ingredients);
 
@@ -19,7 +19,6 @@ export const FeedOrderPage = () => {
   if (!order) {
     return <p className="text text_type_main-default">Заказ не найден</p>;
   }
-  if (!order) return <p>Заказ не найден</p>;
 
   return <OrderDetails order={order} />;
 };

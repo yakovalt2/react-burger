@@ -7,15 +7,20 @@ import { useAppSelector } from "../../services/store";
 import { useOrders } from "../../services/useOrders";
 import { TIngredient } from "../../utils/types";
 import { OrderCard } from "../../components/order-card/OrderCard";
+import Loader from "../../components/loader/Loader";
 
 export function FeedPage() {
   const { items: ingredients } = useAppSelector((state) => state.ingredients);
   const { orders, total, totalToday } = useOrders(ingredients);
 
+  if (ingredients.length === 0 || orders.length === 0) {
+    return <Loader />;
+  }
+
   const doneOrders = orders.filter((o) => o.status === "done");
   const pendingOrders = orders.filter((o) => o.status !== "done");
 
-  const location = useLocation();
+  console.log(orders);
 
   return (
     <div className={styles.wrapper}>
@@ -23,11 +28,7 @@ export function FeedPage() {
         <h2 className="text text_type_main-large mb-4 ml-4">Лента заказов</h2>
         <div className={styles.orderList}>
           {orders.map((order) => (
-            <OrderCard
-              key={order._id}
-              order={order}
-              pathPrefix="/feed"
-            />
+            <OrderCard key={order._id} order={order} pathPrefix="/feed" />
           ))}
         </div>
       </div>
@@ -35,7 +36,7 @@ export function FeedPage() {
       <div className={styles.right}>
         <div className={styles.statusColumns}>
           <div className={styles.statusColumn}>
-            <p className="text text_type_main-default mb-2">Готово</p>
+            <p className="text text_type_main-medium mb-2">Готовы: </p>
             <div className={styles.orderNumbers}>
               {doneOrders.slice(-5).map((o) => (
                 <p key={o._id} className="text text_type_digits-default">
@@ -45,7 +46,7 @@ export function FeedPage() {
             </div>
           </div>
           <div className={styles.statusColumn}>
-            <p className="text text_type_main-default mb-2">В работе</p>
+            <p className="text text_type_main-medium mb-2">В работе: </p>
             <div className={styles.orderNumbers}>
               {pendingOrders.slice(-5).map((o) => (
                 <p key={o._id} className="text text_type_digits-default">
@@ -58,11 +59,11 @@ export function FeedPage() {
 
         <div className={styles.statFull}>
           <p className="text text_type_main-default">Выполнено за все время</p>
-          <p className="text text_type_digits-default">{total}</p>
+          <p className="text text_type_digits-large">{total}</p>
         </div>
         <div className={styles.statFull}>
           <p className="text text_type_main-default">Выполнено сегодня</p>
-          <p className="text text_type_digits-default">{totalToday}</p>
+          <p className="text text_type_digits-large">{totalToday}</p>
         </div>
       </div>
 

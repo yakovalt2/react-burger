@@ -1,7 +1,7 @@
 .wrapper {
   max-width: 640px;
-  margin: 0 auto;
-  padding: 40px;
+  margin: 0;
+  padding: 0 50px 60px 50px;
   display: flex;
   flex-direction: column;
 }
@@ -11,7 +11,7 @@
 }
 
 .done {
-  color: #00cc66;
+  color: #00ccc9;
 }
 
 .pending {
@@ -50,7 +50,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   padding: 8px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -74,7 +73,7 @@
 }
 
 .footer {
-  margin-top: 40px;
+  margin-top: 70px;
   display: flex;
   justify-content: space-between;
   align-items: center;

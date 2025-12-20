@@ -16,13 +16,11 @@ import { ForgotPasswordPage } from "../../pages/ForgotPassword/ForgotPassword";
 import { ResetPasswordPage } from "../../pages/ResetPassword/ResetPassword";
 import { ProfilePage } from "../../pages/Profile/Profile";
 import { FeedPage } from "../../pages/Feed/FeedPage";
-import { FeedOrderPage } from "../../pages/Feed/FeedOrderPage";
 import { ProfileForm } from "../../pages/Profile/ProfileForm";
-import ProfileOrderPage from "../../pages/Profile/ProfileOrderPage";
 import ProfileOrdersPage from "../../pages/Profile/ProfileOrdersPage";
 import IngredientPage from "../../pages/IngredientPage/IngredientPage";
-import { OrderModal } from "../modal/OrderModal";
 import { OrderDetails } from "../order-details/OrderDetails";
+import { OrderPage } from "../order-page/OrderPage";
 
 import { ProtectedRouteElement } from "../../components/routes/ProtectedRouteElement";
 
@@ -67,7 +65,8 @@ function App() {
   const ingredientId = location.pathname.split("/")[2];
   const ingredient = ingredients.find((i) => i._id === ingredientId);
 
-  const orderId = location.pathname.split("/")[2];
+  const pathSegments = location.pathname.split("/");
+  const orderId = pathSegments[pathSegments.length - 1];
   const order = orders.find((o) => o._id === orderId);
 
   return (
@@ -85,7 +84,6 @@ function App() {
             }
           />
           <Route path="/feed" element={<FeedPage />} />
-          <Route path="/feed/:id" element={<FeedOrderPage />} />
 
           <Route element={<ProtectedRouteElement onlyUnAuth />}>
             <Route path="/login" element={<LoginPage />} />
@@ -103,11 +101,13 @@ function App() {
             <Route path="/profile" element={<ProfilePage />}>
               <Route index element={<ProfileForm />} />
               <Route path="orders" element={<ProfileOrdersPage />} />
-              <Route path="orders/:id" element={<ProfileOrderPage />} />
             </Route>
           </Route>
 
           <Route path="/ingredients/:id" element={<IngredientPage />} />
+
+          <Route path="/feed/:id" element={<OrderPage />} />
+          <Route path="/profile/orders/:id" element={<OrderPage />} />
         </Routes>
 
         {background && ingredient && (
@@ -126,6 +126,19 @@ function App() {
             <OrderDetails order={order} />
           </Modal>
         )}
+
+        {background &&
+          location.pathname.startsWith("/profile/orders/") &&
+          order && (
+            <Modal
+              title={
+                <p className="text text_type_digits-default">#{order.number}</p>
+              }
+              onClose={() => navigate(-1)}
+            >
+              <OrderDetails order={order} />
+            </Modal>
+          )}
       </main>
     </div>
   );
