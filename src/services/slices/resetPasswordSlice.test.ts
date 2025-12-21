@@ -1,14 +1,11 @@
 import reducer, {
   allowResetPassword,
   denyResetPassword,
+  initialState,
 } from "./resetPasswordSlice";
 
 describe("resetPasswordSlice", () => {
-  const initialState = {
-    canReset: false,
-  };
-
-  it("должен возвращать начальное состояние", () => {
+  it("должен возвращать initialState", () => {
     expect(reducer(undefined, { type: "unknown" })).toEqual(initialState);
   });
 
@@ -18,7 +15,8 @@ describe("resetPasswordSlice", () => {
   });
 
   it("denyResetPassword устанавливает canReset в false", () => {
-    const state = reducer({ canReset: true }, denyResetPassword());
+    const stateWithTrue = { ...initialState, canReset: true };
+    const state = reducer(stateWithTrue, denyResetPassword());
     expect(state.canReset).toBe(false);
   });
 });
