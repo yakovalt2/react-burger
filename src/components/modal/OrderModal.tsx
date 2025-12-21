@@ -16,9 +16,7 @@ export const OrderModal: React.FC<Props> = ({ orderId }) => {
 
   const order = orders.find((o) => o._id === orderId);
 
-  const closeModal = () => navigate(-1);
-
   if (!order) return <p>Заказ не найден</p>;
 
-  return <OrderDetails order={order} />;
+  return <OrderDetails order={order} isModal={true}/>;
 };

@@ -6,12 +6,16 @@ import { useAppSelector } from "../../services/store";
 import { TIngredient } from "../../utils/types";
 import formatOrderDate from "../../utils/formatOrderDate";
 
-type Props = {
+type OrderDetailsProps = {
   order: TOrder & { ingredientsData: TIngredient[]; totalPrice: number };
+  isModal?: boolean;
 };
 type IngredientWithCount = TIngredient & { count: number };
 
-export const OrderDetails: React.FC<Props> = ({ order }) => {
+export const OrderDetails: React.FC<OrderDetailsProps> = ({
+  order,
+  isModal = false,
+}: OrderDetailsProps) => {
   const { items: allIngredients } = useAppSelector((s) => s.ingredients);
 
   const orderIngredients = order.ingredients
@@ -34,9 +38,17 @@ export const OrderDetails: React.FC<Props> = ({ order }) => {
   const totalPrice = orderIngredients.reduce((sum, i) => sum + i!.price, 0);
 
   return (
-    <div className={styles.wrapper}>
-      <p className="text text_type_main-medium mt-4 mb-4">{order.name}</p>
-
+    <div className={`${styles.wrapper} ${isModal ? styles.modalWrapper : ""}`}>
+      {isModal && (
+        <p
+          className={`text text_type_digits-default mt-4 mb-4 ${styles.number}`}
+        >
+          #{order.number}
+        </p>
+      )}
+      <p className={`text text_type_main-default mt-4 mb-4 ${styles.name}`}>
+        {order.name}
+      </p>
       <p
         className={`text text_type_main-default mb-4 ${
           order.status === "done" ? styles.done : styles.pending

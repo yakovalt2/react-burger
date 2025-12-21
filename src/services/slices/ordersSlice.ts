@@ -13,7 +13,10 @@ type OrdersState = {
   totalToday: number;
   wsConnected: boolean;
   error: Event | null;
-  currentOrder?: TOrder & { ingredientsData: TIngredient[]; totalPrice: number; };
+  currentOrder?: TOrder & {
+    ingredientsData: TIngredient[];
+    totalPrice: number;
+  };
 };
 
 const initialState: OrdersState = {
@@ -25,10 +28,15 @@ const initialState: OrdersState = {
 };
 
 const SET_CURRENT_ORDER = "SET_CURRENT_ORDER";
+const CLEAR_CURRENT_ORDER = "CLEAR_CURRENT_ORDER";
 
 export const setCurrentOrder = (order?: TOrder) => ({
   type: SET_CURRENT_ORDER,
   payload: order,
+});
+
+export const clearCurrentOrder = () => ({
+  type: CLEAR_CURRENT_ORDER,
 });
 
 export const ordersReducer = (
@@ -55,6 +63,9 @@ export const ordersReducer = (
 
     case SET_CURRENT_ORDER:
       return { ...state, currentOrder: action.payload };
+
+    case CLEAR_CURRENT_ORDER:
+      return { ...state, currentOrder: undefined };
 
     default:
       return state;

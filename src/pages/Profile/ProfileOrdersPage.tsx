@@ -5,10 +5,13 @@ import { useAppSelector } from "../../services/store";
 import { OrderCard } from "../../components/order-card/OrderCard";
 import Loader from "../../components/loader/Loader";
 import { useState, useEffect } from "react";
+import { useAppDispatch } from "../../services/store";
+import { setCurrentOrder } from "../../services/slices/ordersSlice";
 
 export default function ProfileOrdersPage() {
   const { items: ingredients } = useAppSelector((state) => state.ingredients);
   const { orders } = useOrders(ingredients, true);
+  const dispatch = useAppDispatch();
 
   const [loading, setLoading] = useState(true);
 
@@ -33,6 +36,7 @@ export default function ProfileOrdersPage() {
             key={order._id}
             order={order}
             pathPrefix="/profile/orders"
+            onClick={() => dispatch(setCurrentOrder(order))}
           />
         ))}
       </div>

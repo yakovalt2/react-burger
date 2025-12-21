@@ -18,8 +18,6 @@ export function FeedPage() {
 
   const [loading, setLoading] = useState(true);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 500);
@@ -29,11 +27,6 @@ export function FeedPage() {
   if (loading || ingredients.length === 0 || orders.length === 0) {
     return <Loader />;
   }
-
-  const openModal = (order: any) => {
-    dispatch(setCurrentOrder(order));
-    navigate(`/feed/${order._id}`, { state: { background: location } });
-  };
 
   const doneOrders = orders.filter((o) => o.status === "done");
   const pendingOrders = orders.filter((o) => o.status !== "done");
@@ -52,7 +45,7 @@ export function FeedPage() {
               key={order._id}
               order={order}
               pathPrefix="/feed"
-              onClick={() => openModal(order)}
+              onClick={() => dispatch(setCurrentOrder(order))}
             />
           ))}
         </div>

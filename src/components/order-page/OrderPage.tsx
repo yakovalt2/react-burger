@@ -20,5 +20,5 @@ export const OrderPage: React.FC = () => {
     return <p className="text text_type_main-default">Заказ не найден</p>;
   }
 
-  return <OrderDetails order={order} />;
+  return <OrderDetails order={order} isModal={true} />;
 };

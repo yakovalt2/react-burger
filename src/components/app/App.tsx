@@ -23,8 +23,7 @@ import { OrderDetails } from "../order-details/OrderDetails";
 import { OrderPage } from "../order-page/OrderPage";
 
 import { ProtectedRouteElement } from "../../components/routes/ProtectedRouteElement";
-
-import { useOrders } from "../../services/useOrders";
+import { clearCurrentOrder } from "../../services/slices/ordersSlice";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -117,7 +116,10 @@ function App() {
             title={
               <p className="text text_type_digits-default">#{order.number}</p>
             }
-            onClose={() => navigate(-1)}
+            onClose={() => {
+              dispatch(clearCurrentOrder());
+              navigate(-1);
+            }}
           >
             <OrderDetails order={order} />
           </Modal>
