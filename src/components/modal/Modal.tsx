@@ -23,10 +23,10 @@ const Modal: React.FC<ModalProps> = ({ title, onClose, children }) => {
 
   return ReactDOM.createPortal(
     <>
-      <div className={styles.modal}>
+      <div className={styles.modal} data-cy="modal">
         <div className={title ? styles.header : styles.headerRight}>
           {title && <h2 className='text text_type_main-medium'>{title}</h2>}
-          <button className={styles.closeBtn} onClick={onClose}>
+          <button className={styles.closeBtn} onClick={onClose} data-cy="close-modal">
             <CloseIcon type="primary" />
           </button>
         </div>
