@@ -151,7 +151,9 @@ const BurgerConstructor: React.FC = () => {
   const [error, setError] = React.useState<string | null>(null);
 
   const handleOrderClick = async () => {
-    if (!auth.user) {
+    let token = auth.accessToken || localStorage.getItem("accessToken");
+
+    if (!auth.user || !token) {
       navigate("/login", { state: { from: location } });
       return;
     }
@@ -164,7 +166,7 @@ const BurgerConstructor: React.FC = () => {
       setIsLoading(true);
       setError(null);
 
-      const token = auth.accessToken;
+      const token = localStorage.getItem("accessToken");
 
       const response = await fetch(`${API_URL}/orders`, {
         method: "POST",
