@@ -44,9 +44,14 @@ export const loginUser = createAsyncThunk(
       });
       setCookie("token", data.accessToken, { path: "/", expires: 3600 });
       localStorage.setItem("refreshToken", data.refreshToken);
+      localStorage.setItem("accessToken", data.accessToken);
       return data;
-    } catch (err: any) {
-      return rejectWithValue(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+
+      return rejectWithValue("Неизвестная ошибка");
     }
   }
 );
@@ -75,8 +80,12 @@ export const registerUser = createAsyncThunk(
       setCookie("token", data.accessToken, { path: "/", expires: 3600 });
       localStorage.setItem("refreshToken", data.refreshToken);
       return data;
-    } catch (err: any) {
-      return rejectWithValue(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+
+      return rejectWithValue("Неизвестная ошибка");
     }
   }
 );
@@ -99,8 +108,12 @@ export const logoutUser = createAsyncThunk(
 
       localStorage.removeItem("refreshToken");
       return data;
-    } catch (err: any) {
-      return rejectWithValue(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+
+      return rejectWithValue("Неизвестная ошибка");
     }
   }
 );
@@ -126,8 +139,12 @@ export const refreshToken = createAsyncThunk(
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
       };
-    } catch (err: any) {
-      return rejectWithValue(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+
+      return rejectWithValue("Неизвестная ошибка");
     }
   }
 );
@@ -157,8 +174,12 @@ export const getUser = createAsyncThunk(
       );
 
       return data.user;
-    } catch (err: any) {
-      return rejectWithValue(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+
+      return rejectWithValue("Неизвестная ошибка");
     }
   }
 );
@@ -196,8 +217,12 @@ export const updateUser = createAsyncThunk(
       );
 
       return data.user;
-    } catch (err: any) {
-      return rejectWithValue(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+
+      return rejectWithValue("Неизвестная ошибка");
     }
   }
 );
@@ -213,8 +238,6 @@ const authSlice = createSlice({
       state.user = null;
       state.accessToken = null;
       state.refreshToken = null;
-      deleteCookie("token");
-      localStorage.removeItem("refreshToken");
     },
   },
   extraReducers: (builder) => {
@@ -242,8 +265,6 @@ const authSlice = createSlice({
         state.accessToken = null;
         state.refreshToken = null;
         state.error = null;
-        deleteCookie("token");
-        localStorage.removeItem("refreshToken");
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.error = action.payload as string;
@@ -251,11 +272,6 @@ const authSlice = createSlice({
       .addCase(refreshToken.fulfilled, (state, action) => {
         state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
-        setCookie("token", action.payload.accessToken, {
-          path: "/",
-          expires: new Date(Date.now() + 3600 * 1000),
-        });
-        localStorage.setItem("refreshToken", action.payload.refreshToken);
       })
       .addCase(refreshToken.rejected, (state, action) => {
         state.user = null;
@@ -281,5 +297,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, setAuthChecked} = authSlice.actions;
+export const { logout, setAuthChecked } = authSlice.actions;
 export default authSlice.reducer;

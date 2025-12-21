@@ -5,7 +5,7 @@ import ModalOverlay from "./ModalOverlay";
 import { CloseIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 
 type ModalProps = {
-  title?: string;
+  title?: string | React.ReactNode;
   onClose: () => void;
   children: React.ReactNode;
 };
@@ -24,8 +24,8 @@ const Modal: React.FC<ModalProps> = ({ title, onClose, children }) => {
   return ReactDOM.createPortal(
     <>
       <div className={styles.modal}>
-        <div className={styles.header}>
-          {title && <h2 className='text text_type_main-large'>{title}</h2>}
+        <div className={title ? styles.header : styles.headerRight}>
+          {title && <h2 className='text text_type_main-medium'>{title}</h2>}
           <button className={styles.closeBtn} onClick={onClose}>
             <CloseIcon type="primary" />
           </button>

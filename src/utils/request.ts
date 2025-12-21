@@ -1,7 +1,7 @@
 export const BASE_URL = "https://norma.education-services.ru/api/";
 interface ApiResponse {
   success?: boolean;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 const checkResponse = async <T>(res: Response): Promise<T> => {

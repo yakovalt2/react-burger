@@ -29,15 +29,19 @@ export function RegisterPage() {
 
       if (result?.success) {
         console.log("Пользователь зарегистрирован:", result.user);
-        navigate("/"); 
+        navigate("/");
       } else {
         setError("Ошибка регистрации");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Ошибка регистрации:", err);
-      setError(err.message || "Ошибка регистрации");
-    } finally {
-      setLoading(false);
+      setError(
+        err instanceof Error
+          ? err.message
+          : typeof err === "string"
+          ? err
+          : "Ошибка регистрации"
+      );
     }
   };
 

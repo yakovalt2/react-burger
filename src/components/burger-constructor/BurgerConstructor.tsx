@@ -8,7 +8,7 @@ import {
 import { TIngredient } from "../../utils/types";
 import React, { useRef } from "react";
 import Modal from "../modal/Modal";
-import OrderDetails from "../order-details/OrderDetails";
+import OrderDetails from "../order-confirmation/OrderConfirmation";
 import { useDrop, useDrag, DropTargetMonitor } from "react-dnd";
 import { XYCoord } from "dnd-core";
 import { useAppDispatch, useAppSelector } from "../../services/store";
@@ -22,8 +22,9 @@ import {
   incrementCount,
   decrementCount,
 } from "../../services/slices/IngredientsSlice";
-import { request } from "../../utils/request";
 import { useLocation, useNavigate } from "react-router-dom";
+import { API_URL } from "../../utils/constants";
+import { WS_URL } from "../../utils/constants";
 
 const BurgerConstructor: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -150,7 +151,9 @@ const BurgerConstructor: React.FC = () => {
   const [error, setError] = React.useState<string | null>(null);
 
   const handleOrderClick = async () => {
-    if (!auth.user) {
+    let token = auth.accessToken || localStorage.getItem("accessToken");
+
+    if (!auth.user || !token) {
       navigate("/login", { state: { from: location } });
       return;
     }
@@ -163,20 +166,33 @@ const BurgerConstructor: React.FC = () => {
       setIsLoading(true);
       setError(null);
 
-      const data = await request<{
-        success: boolean;
-        order: { number: number };
-      }>("orders", {
+      const token = localStorage.getItem("accessToken");
+
+      const response = await fetch(`${API_URL}/orders`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `${token}` } : {}),
+        },
         body: JSON.stringify({ ingredients: ingredientIds }),
       });
 
+      if (!response.ok) {
+        throw new Error(`Ошибка ${response.status}`);
+      }
+
+      const data: { success: boolean; order: { number: number } } = await response.json();
+
       setOrderNumber(data.order.number);
       setIsOrderOpen(true);
-    } catch (err: any) {
-      setError(err.message);
-      console.error("Ошибка оформления заказа:", err);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+        console.error("Ошибка оформления заказа:", err);
+      } else {
+        setError("Ошибка оформления заказа");
+        console.error("Неизвестная ошибка:", err);
+      }
     } finally {
       setIsLoading(false);
     }

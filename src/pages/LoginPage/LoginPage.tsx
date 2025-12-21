@@ -29,9 +29,16 @@ export function LoginPage() {
     try {
       const result = await dispatch(loginUser({ email, password })).unwrap();
       navigate(from, { replace: true });
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : typeof err === "string"
+          ? err
+          : "Ошибка входа";
+
       console.error("Ошибка входа:", err);
-      setError(err);
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -93,5 +100,5 @@ export function LoginPage() {
         </p>
       </form>
     </div>
-  ); 
+  );
 }

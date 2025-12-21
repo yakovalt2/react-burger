@@ -1,29 +1,38 @@
+type CookieProps = {
+  expires?: number | Date | string;
+  path?: string;
+  secure?: boolean;
+  sameSite?: "Strict" | "Lax" | "None";
+  domain?: string;
+  [key: string]: string | number | boolean | Date | undefined;
+};
+
 export function setCookie(
   name: string,
   value: string,
-  props?: {
-    expires?: number | Date | string;
-    path?: string;
-    [key: string]: any;
-  } 
+  props: CookieProps = {}
 ) {
-  props = props || {};
   let exp = props.expires;
-  if (typeof exp === "number" && exp) {
+
+  if (typeof exp === "number") {
     const d = new Date();
     d.setTime(d.getTime() + exp * 1000);
-    exp = props.expires = d;
+    props.expires = d;
   }
-  if (exp && exp instanceof Date) {
-    props.expires = exp.toUTCString();
+
+  if (props.expires instanceof Date) {
+    props.expires = props.expires.toUTCString();
   }
 
   let updatedCookie =
     encodeURIComponent(name) + "=" + encodeURIComponent(value);
 
   for (const propName in props) {
-    updatedCookie += "; " + propName;
     const propValue = props[propName];
+
+    if (propValue === undefined) continue;
+
+    updatedCookie += "; " + propName;
     if (propValue !== true) {
       updatedCookie += "=" + propValue;
     }

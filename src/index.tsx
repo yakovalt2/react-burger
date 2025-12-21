@@ -11,7 +11,6 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <React.StrictMode>
     <Provider store={store}>
       <DndProvider backend={HTML5Backend}>
         <BrowserRouter>
@@ -19,5 +18,4 @@ root.render(
         </BrowserRouter>
       </DndProvider>
     </Provider>
-  </React.StrictMode>
 );

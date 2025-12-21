@@ -1,23 +1,91 @@
-import React from 'react';
-import styles from './order-details.module.css';
-import { CheckMarkIcon } from '@ya.praktikum/react-developer-burger-ui-components';
+import React from "react";
+import styles from "./order-details.module.css";
+import { CurrencyIcon } from "@ya.praktikum/react-developer-burger-ui-components";
+import { TOrder } from "../../utils/types";
+import { useAppSelector } from "../../services/store";
+import { TIngredient } from "../../utils/types";
+import formatOrderDate from "../../utils/formatOrderDate";
 
-type Props = {
-  orderNumber: number;
+type OrderDetailsProps = {
+  order: TOrder & { ingredientsData: TIngredient[]; totalPrice: number };
+  isModal?: boolean;
 };
+type IngredientWithCount = TIngredient & { count: number };
 
-const OrderDetails: React.FC<Props> = ({ orderNumber }) => {
+export const OrderDetails: React.FC<OrderDetailsProps> = ({
+  order,
+  isModal = false,
+}: OrderDetailsProps) => {
+  const { items: allIngredients } = useAppSelector((s) => s.ingredients);
+
+  const orderIngredients = order.ingredients
+    .map((id) => allIngredients.find((i) => i._id === id))
+    .filter(Boolean);
+
+  const groupedIngredients: IngredientWithCount[] = orderIngredients.reduce(
+    (acc: IngredientWithCount[], ingredient) => {
+      const existing = acc.find((i) => i._id === ingredient!._id);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        acc.push({ ...(ingredient as TIngredient), count: 1 });
+      }
+      return acc;
+    },
+    []
+  );
+
+  const totalPrice = orderIngredients.reduce((sum, i) => sum + i!.price, 0);
+
   return (
-    <div className={styles.container}>
-      <p className={`text text_type_digits-large mb-8 ${styles.glowingText}`}>{orderNumber}</p>
-      <p className="text text_type_main-medium mb-15">идентификатор заказа</p>
-      <CheckMarkIcon type="primary" />
-      <p className="text text_type_main-default mt-15">Ваш заказ начали готовить</p>
-      <p className="text text_type_main-default text_color_inactive mb-15">
-        Дождитесь готовности на орбитальной станции
+    <div className={`${styles.wrapper} ${isModal ? styles.modalWrapper : ""}`}>
+      {isModal && (
+        <p
+          className={`text text_type_digits-default mt-4 mb-4 ${styles.number}`}
+        >
+          #{order.number}
+        </p>
+      )}
+      <p className={`text text_type_main-default mt-4 mb-4 ${styles.name}`}>
+        {order.name}
       </p>
+      <p
+        className={`text text_type_main-default mb-4 ${
+          order.status === "done" ? styles.done : styles.pending
+        }`}
+      >
+        {order.status === "done" ? "Выполнен" : "В работе"}
+      </p>
+
+      <div className={styles.composition}>
+        <p className="text text_type_main-medium mb-2">Состав:</p>
+        <div className={`${styles.scroll} ${styles.list}`}>
+          {groupedIngredients.map((item, index) => (
+            <div key={`${item!._id}-${index}`} className={styles.item}>
+              <div className={styles.ingredient}>
+                <img src={item!.image} alt={item!.name} />
+                <p className="text text_type_main-default">{item!.name}</p>
+              </div>
+              <div className={styles.price}>
+                <p className="text text_type_digits-default mr-2">
+                  {item.count} x {item.price}
+                </p>
+                <CurrencyIcon type="primary" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className={styles.footer}>
+        <p className="text text_type_main-default text_color_inactive">
+          {formatOrderDate(order.createdAt)}
+        </p>
+        <div className={styles.price}>
+          <p className="text text_type_digits-default mr-2">{totalPrice}</p>
+          <CurrencyIcon type="primary" />
+        </div>
+      </div>
     </div>
   );
 };
-
-export default OrderDetails;
