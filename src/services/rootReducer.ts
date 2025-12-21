@@ -5,7 +5,7 @@ import currentIngredientReducer from "./slices/currentIngredientSlice";
 import orderReducer from "./slices/orderSlice";
 import authReducer from "./slices/authSlice";
 import resetPasswordReducer from './slices/resetPasswordSlice'
-import ordersReducer from './slices/ordersSlice'
+import { ordersReducer } from './slices/ordersSlice';
 
 export const rootReducer = combineReducers({
   ingredients: ingredientsReducer,

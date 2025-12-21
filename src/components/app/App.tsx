@@ -35,7 +35,7 @@ function App() {
 
   const { items: ingredients, status } = useAppSelector((s) => s.ingredients);
   const auth = useAppSelector((s) => s.auth);
-  const { orders } = useOrders(ingredients);
+  const order = useAppSelector((s) => s.orders.currentOrder);
 
   useEffect(() => {
     const init = async () => {
@@ -64,10 +64,6 @@ function App() {
 
   const ingredientId = location.pathname.split("/")[2];
   const ingredient = ingredients.find((i) => i._id === ingredientId);
-
-  const pathSegments = location.pathname.split("/");
-  const orderId = pathSegments[pathSegments.length - 1];
-  const order = orders.find((o) => o._id === orderId);
 
   return (
     <div className={styles.app}>

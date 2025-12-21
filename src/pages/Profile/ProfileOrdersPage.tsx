@@ -4,12 +4,20 @@ import { useOrders } from "../../services/useOrders";
 import { useAppSelector } from "../../services/store";
 import { OrderCard } from "../../components/order-card/OrderCard";
 import Loader from "../../components/loader/Loader";
+import { useState, useEffect } from "react";
 
 export default function ProfileOrdersPage() {
   const { items: ingredients } = useAppSelector((state) => state.ingredients);
   const { orders } = useOrders(ingredients, true);
 
-  if (ingredients.length === 0 || orders.length === 0) {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading || ingredients.length === 0 || orders.length === 0) {
     return <Loader />;
   }
 

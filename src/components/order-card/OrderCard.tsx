@@ -9,12 +9,13 @@ import { useLocation } from "react-router-dom";
 interface OrderCardProps {
   order: TOrder & { ingredientsData: TIngredient[]; totalPrice: number };
   pathPrefix: string;
+  onClick?: () => void;
 }
 
-export const OrderCard: React.FC<OrderCardProps> = ({ order, pathPrefix }) => {
+export const OrderCard: React.FC<OrderCardProps> = ({ order, pathPrefix, onClick }: OrderCardProps) => {
   const location = useLocation();
   return (
-    <Link to={`${pathPrefix}/${order._id}`} state={{ background: location }} className={styles.orderCard}>
+    <Link to={`${pathPrefix}/${order._id}`} state={{ background: location }} className={styles.orderCard} onClick={onClick}>
       <div className={styles.cardHeader}>
         <p className="text text_type_digits-default">#{order.number}</p>
         <p className="text text_type_main-default text_color_inactive">

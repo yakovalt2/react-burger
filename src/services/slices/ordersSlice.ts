@@ -1,63 +1,62 @@
-import { createSlice, createAction, PayloadAction } from "@reduxjs/toolkit";
-import { TOrder, TIngredient } from "../../utils/types";
+import {
+  WS_CONNECTION_SUCCESS,
+  WS_CONNECTION_ERROR,
+  WS_CONNECTION_CLOSED,
+  WS_GET_MESSAGE,
+} from "../../utils/action-types";
+import { TOrder } from "../../utils/types";
+import { TIngredient } from "../../utils/types";
 
-export const wsGetMessage = createAction<{
-  success: boolean;
+type OrdersState = {
   orders: TOrder[];
   total: number;
   totalToday: number;
-}>("WS_GET_MESSAGE");
-
-interface OrdersState {
-  orders: (TOrder & { ingredientsData: TIngredient[]; totalPrice: number })[];
-  total: number;
-  totalToday: number;
-}
+  wsConnected: boolean;
+  error: Event | null;
+  currentOrder?: TOrder & { ingredientsData: TIngredient[]; totalPrice: number; };
+};
 
 const initialState: OrdersState = {
   orders: [],
   total: 0,
   totalToday: 0,
+  wsConnected: false,
+  error: null,
 };
 
-export const ordersSlice = createSlice({
-  name: "orders",
-  initialState,
-  reducers: {
-    setOrders: (
-      state,
-      action: PayloadAction<{
-        orders: TOrder[];
-        total: number;
-        totalToday: number;
-        allIngredients: TIngredient[];
-      }>
-    ) => {
-      state.orders = action.payload.orders.map((order) => {
-        const ingredientsData = order.ingredients
-          .map((id) => action.payload.allIngredients.find((i) => i._id === id))
-          .filter(Boolean) as TIngredient[];
-        const totalPrice = ingredientsData.reduce((sum, i) => sum + i.price, 0);
-        return { ...order, ingredientsData, totalPrice };
-      });
-      state.total = action.payload.total;
-      state.totalToday = action.payload.totalToday;
-    },
-  },
-  extraReducers: (builder) => {
-    builder.addCase(wsGetMessage, (state, action) => {
-      if (action.payload.success) {
-        state.orders = action.payload.orders.map(order => ({
-          ...order,
-          ingredientsData: [], 
-          totalPrice: 0,
-        }));
-        state.total = action.payload.total;
-        state.totalToday = action.payload.totalToday;
-      }
-    });
-  },
+const SET_CURRENT_ORDER = "SET_CURRENT_ORDER";
+
+export const setCurrentOrder = (order?: TOrder) => ({
+  type: SET_CURRENT_ORDER,
+  payload: order,
 });
 
-export const { setOrders } = ordersSlice.actions;
-export default ordersSlice.reducer;
+export const ordersReducer = (
+  state = initialState,
+  action: any
+): OrdersState => {
+  switch (action.type) {
+    case WS_CONNECTION_SUCCESS:
+      return { ...state, wsConnected: true };
+
+    case WS_CONNECTION_ERROR:
+      return { ...state, error: action.payload };
+
+    case WS_CONNECTION_CLOSED:
+      return { ...state, wsConnected: false };
+
+    case WS_GET_MESSAGE:
+      return {
+        ...state,
+        orders: action.payload.orders,
+        total: action.payload.total,
+        totalToday: action.payload.totalToday,
+      };
+
+    case SET_CURRENT_ORDER:
+      return { ...state, currentOrder: action.payload };
+
+    default:
+      return state;
+  }
+};

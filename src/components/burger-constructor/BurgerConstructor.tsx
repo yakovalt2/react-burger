@@ -175,18 +175,11 @@ const BurgerConstructor: React.FC = () => {
         body: JSON.stringify({ ingredients: ingredientIds }),
       });
 
-      const ws = new WebSocket(`${WS_URL}/orders?token=${token}`);
-
-      ws.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-      };
-
       if (!response.ok) {
         throw new Error(`Ошибка ${response.status}`);
       }
 
-      const data: { success: boolean; order: { number: number } } =
-        await response.json();
+      const data: { success: boolean; order: { number: number } } = await response.json();
 
       setOrderNumber(data.order.number);
       setIsOrderOpen(true);
