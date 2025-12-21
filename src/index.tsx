@@ -13,7 +13,7 @@ const root = ReactDOM.createRoot(
 root.render(
     <Provider store={store}>
       <DndProvider backend={HTML5Backend}>
-        <BrowserRouter>
+        <BrowserRouter basename="/react-burger">
           <App />
         </BrowserRouter>
       </DndProvider>
