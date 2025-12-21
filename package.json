@@ -64,5 +64,5 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.2"
   },
-  "homepage": "/react-burger"
+  "homepage": "https://yakovalt2.github.io/react-burger"
 }
