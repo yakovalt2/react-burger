@@ -1,17 +1,20 @@
-import reducer, { logout, setAuthChecked } from "./authSlice";
-import { loginUser, logoutUser, getUser } from "./authSlice";
+import reducer, {
+  logout,
+  setAuthChecked,
+  loginUser,
+  logoutUser,
+  getUser,
+  initialState,
+} from "./authSlice";
+
+// константы
+const LOGIN_USER_FULFILLED = loginUser.fulfilled.type;
+const LOGIN_USER_REJECTED = loginUser.rejected.type;
+const GET_USER_FULFILLED = getUser.fulfilled.type;
+const GET_USER_REJECTED = getUser.rejected.type;
 
 describe("authSlice", () => {
-  const initialState = {
-    user: null,
-    accessToken: null,
-    refreshToken: null,
-    loading: false,
-    error: null,
-    isAuthChecked: false,
-  };
-
-  it("должен возвращать начальное состояние по умолчанию", () => {
+  it("должен возвращать initialState по умолчанию", () => {
     expect(reducer(undefined, { type: "unknown" })).toEqual(initialState);
   });
 
@@ -27,22 +30,26 @@ describe("authSlice", () => {
       accessToken: "token",
       refreshToken: "refresh",
     };
+
     const state = reducer(prevState, logout());
+
     expect(state.user).toBeNull();
     expect(state.accessToken).toBeNull();
     expect(state.refreshToken).toBeNull();
   });
 
-  it("loginUser.fulfilled обновляет state с user и токенами", () => {
+  it("loginUser.fulfilled обновляет user и токены", () => {
     const action = {
-      type: loginUser.fulfilled.type,
+      type: LOGIN_USER_FULFILLED,
       payload: {
         user: { email: "a@a.com", name: "Alex" },
         accessToken: "access",
         refreshToken: "refresh",
       },
     };
+
     const state = reducer(initialState, action);
+
     expect(state.user).toEqual({ email: "a@a.com", name: "Alex" });
     expect(state.accessToken).toBe("access");
     expect(state.refreshToken).toBe("refresh");
@@ -50,24 +57,35 @@ describe("authSlice", () => {
   });
 
   it("loginUser.rejected устанавливает error", () => {
-    const action = { type: loginUser.rejected.type, payload: "Ошибка" };
+    const action = {
+      type: LOGIN_USER_REJECTED,
+      payload: "Ошибка",
+    };
+
     const state = reducer(initialState, action);
+
     expect(state.error).toBe("Ошибка");
   });
 
   it("getUser.fulfilled устанавливает user и isAuthChecked", () => {
     const action = {
-      type: getUser.fulfilled.type,
+      type: GET_USER_FULFILLED,
       payload: { email: "b@b.com", name: "Bob" },
     };
+
     const state = reducer(initialState, action);
+
     expect(state.user).toEqual({ email: "b@b.com", name: "Bob" });
     expect(state.isAuthChecked).toBe(true);
   });
 
   it("getUser.rejected обнуляет user и устанавливает isAuthChecked", () => {
-    const action = { type: getUser.rejected.type };
+    const action = {
+      type: GET_USER_REJECTED,
+    };
+
     const state = reducer(initialState, action);
+
     expect(state.user).toBeNull();
     expect(state.isAuthChecked).toBe(true);
   });

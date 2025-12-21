@@ -2,6 +2,7 @@ import {
   ordersReducer,
   setCurrentOrder,
   clearCurrentOrder,
+  initialState,
 } from "./ordersSlice";
 import {
   WS_CONNECTION_SUCCESS,
@@ -12,32 +13,24 @@ import {
 
 import { TOrder, TIngredient } from "../../utils/types";
 
-const getTestOrder = (): TOrder => ({
+// Тестовые данные
+const TEST_ORDER: TOrder = {
   _id: "1",
   ingredients: [],
   status: "done",
   number: 123,
   name: "Тестовый заказ",
   createdAt: "2025-12-21T12:00:00.000Z",
-});
+};
 
-const getTestCurrentOrder = () => ({
-  ...getTestOrder(),
+const TEST_CURRENT_ORDER = {
+  ...TEST_ORDER,
   ingredientsData: [] as TIngredient[],
   totalPrice: 0,
-});
-
-const initialState = {
-  orders: [],
-  total: 0,
-  totalToday: 0,
-  wsConnected: false,
-  error: null,
-  currentOrder: undefined,
 };
 
 describe("ordersReducer", () => {
-  it("должен возвращать начальное состояние", () => {
+  it("должен возвращать initialState", () => {
     expect(ordersReducer(undefined, { type: "unknown" })).toEqual(initialState);
   });
 
@@ -62,26 +55,21 @@ describe("ordersReducer", () => {
   });
 
   it("WS_GET_MESSAGE обновляет список заказов и статистику", () => {
-    const orders = [getTestOrder()];
+    const orders = [TEST_ORDER];
     const payload = { orders, total: 10, totalToday: 5 };
-    const state = ordersReducer(initialState, {
-      type: WS_GET_MESSAGE,
-      payload,
-    });
+    const state = ordersReducer(initialState, { type: WS_GET_MESSAGE, payload });
     expect(state.orders).toEqual(orders);
     expect(state.total).toBe(10);
     expect(state.totalToday).toBe(5);
   });
 
   it("setCurrentOrder устанавливает текущий заказ", () => {
-    const order = getTestCurrentOrder();
-    const state = ordersReducer(initialState, setCurrentOrder(order));
-    expect(state.currentOrder).toEqual(order);
+    const state = ordersReducer(initialState, setCurrentOrder(TEST_CURRENT_ORDER));
+    expect(state.currentOrder).toEqual(TEST_CURRENT_ORDER);
   });
 
   it("clearCurrentOrder очищает текущий заказ", () => {
-    const order = getTestCurrentOrder();
-    const stateWithOrder = { ...initialState, currentOrder: order };
+    const stateWithOrder = { ...initialState, currentOrder: TEST_CURRENT_ORDER };
     const state = ordersReducer(stateWithOrder, clearCurrentOrder());
     expect(state.currentOrder).toBeUndefined();
   });

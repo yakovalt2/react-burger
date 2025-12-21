@@ -1,13 +1,28 @@
 /// <reference types="cypress" />
 import "@4tw/cypress-drag-drop";
 
+// Тестовые данные
 const testBun1 = "Флюоресцентная булка R2-D3";
 const testBun2 = "Краторная булка N-200i";
 const testIngredient1 = "Соус Spicy-X";
 const testIngredient2 = "Мини-салат Экзо-Плантаго";
 
+// Alias
 const getUser = "getUser";
 const postOrder = "postOrder";
+
+// URL
+const testUrl = "http://localhost:3000/react-burger";
+
+// Селекторы
+const CARD_SELECTOR = '[class*="card"]';
+const BURGER_CONSTRUCTOR_SELECTOR = '[class*="burgerConstructor"]';
+const CONSTRUCTOR_ELEMENT_SELECTOR = '[class*="constructor-element"]';
+const INGREDIENT_TITLE_SELECTOR = "h3.text_type_main-medium";
+const INGREDIENT_VALUE_SELECTOR = "p.text_type_digits-default";
+const MODAL_SELECTOR = "[data-cy='modal']";
+const CLOSE_MODAL_BUTTON_SELECTOR = "[data-cy='close-modal']";
+const LEGACY_MODAL_SELECTOR = ".modal";
 
 describe("Burger Constructor", () => {
   beforeEach(() => {
@@ -15,7 +30,7 @@ describe("Burger Constructor", () => {
 
     cy.intercept("GET", "**/api/ingredients").as("getIngredients");
 
-    // Ставим токены
+    // Токены
     cy.setCookie("token", "test-access-token");
     cy.window().then((win) => {
       win.localStorage.setItem("accessToken", "test-access-token");
@@ -31,78 +46,77 @@ describe("Burger Constructor", () => {
       },
     }).as(getUser);
 
-    cy.visit("http://localhost:3000");
-    cy.wait(getUser);
+    cy.visit(testUrl);
+    cy.wait(`@${getUser}`);
     cy.wait("@getIngredients");
   });
 
   it("добавляет ингредиенты в конструктор через drag-and-drop", () => {
     // Булка
-    cy.contains('[class*="card"]', testBun1).trigger("dragstart");
-    cy.get('[class*="burgerConstructor"]').trigger("drop");
+    cy.contains(CARD_SELECTOR, testBun1).trigger("dragstart");
+    cy.get(BURGER_CONSTRUCTOR_SELECTOR).trigger("drop");
 
     // Начинка
-    cy.contains('[class*="card"]', testIngredient1).trigger("dragstart");
-    cy.get('[class*="burgerConstructor"]').trigger("drop");
-    cy.contains('[class*="card"]', testIngredient2).trigger("dragstart");
-    cy.get('[class*="burgerConstructor"]').trigger("drop");
+    cy.contains(CARD_SELECTOR, testIngredient1).trigger("dragstart");
+    cy.get(BURGER_CONSTRUCTOR_SELECTOR).trigger("drop");
 
-    // Проверяем, что добавилась нужная начинка
-    cy.get('[class*="constructor-element"]')
+    cy.contains(CARD_SELECTOR, testIngredient2).trigger("dragstart");
+    cy.get(BURGER_CONSTRUCTOR_SELECTOR).trigger("drop");
+
+    // Проверяем начинку
+    cy.get(CONSTRUCTOR_ELEMENT_SELECTOR)
       .contains(testIngredient1)
       .should("exist");
-    cy.get('[class*="constructor-element"]')
+
+    cy.get(CONSTRUCTOR_ELEMENT_SELECTOR)
       .contains(testIngredient2)
       .should("exist");
   });
 
   it("открывает и закрывает модальное окно ингредиента", () => {
-    // Кликаем на ингредиент (открываем модалку)
-    cy.contains('[class*="card"]', testBun1).click();
+    // Открываем модалку
+    cy.contains(CARD_SELECTOR, testBun1).click();
 
-    // Проверяем имя ингредиента
-    cy.get("h3.text_type_main-medium").should("contain.text", testBun1);
+    // Проверяем название
+    cy.get(INGREDIENT_TITLE_SELECTOR).should("contain.text", testBun1);
 
-    // Проверяем числовые значения (калории, белки, жиры, углеводы)
-    cy.get("p.text_type_digits-default").eq(0).should("not.be.empty");
-    cy.get("p.text_type_digits-default").eq(1).should("not.be.empty");
-    cy.get("p.text_type_digits-default").eq(2).should("not.be.empty");
-    cy.get("p.text_type_digits-default").eq(3).should("not.be.empty");
+    // Проверяем значения
+    cy.get(INGREDIENT_VALUE_SELECTOR).eq(0).should("not.be.empty");
+    cy.get(INGREDIENT_VALUE_SELECTOR).eq(1).should("not.be.empty");
+    cy.get(INGREDIENT_VALUE_SELECTOR).eq(2).should("not.be.empty");
+    cy.get(INGREDIENT_VALUE_SELECTOR).eq(3).should("not.be.empty");
 
     // Закрываем модалку
-    cy.get("[data-cy='close-modal']").click();
-    cy.get(".modal").should("not.exist");
+    cy.get(CLOSE_MODAL_BUTTON_SELECTOR).click();
+    cy.get(LEGACY_MODAL_SELECTOR).should("not.exist");
   });
 
   it("оформляет заказ и показывает номер в модалке", () => {
-    // Мокаем POST заказа
     cy.intercept("POST", "**/api/orders", {
       statusCode: 200,
       body: { success: true, order: { number: 65434 } },
     }).as(postOrder);
 
-    // Ждём GET пользователя
-    cy.wait(`@${getUser}`);
-
     // Drag-and-drop ингредиентов
-    cy.contains('[class*="card"]', testBun1).trigger("dragstart");
-    cy.get('[class*="burgerConstructor"]').trigger("drop");
-    cy.contains('[class*="card"]', testIngredient1).trigger("dragstart");
-    cy.get('[class*="burgerConstructor"]').trigger("drop");
-    cy.contains('[class*="card"]', testIngredient2).trigger("dragstart");
-    cy.get('[class*="burgerConstructor"]').trigger("drop");
+    cy.contains(CARD_SELECTOR, testBun1).trigger("dragstart");
+    cy.get(BURGER_CONSTRUCTOR_SELECTOR).trigger("drop");
 
-    // Кликаем оформить заказ
+    cy.contains(CARD_SELECTOR, testIngredient1).trigger("dragstart");
+    cy.get(BURGER_CONSTRUCTOR_SELECTOR).trigger("drop");
+
+    cy.contains(CARD_SELECTOR, testIngredient2).trigger("dragstart");
+    cy.get(BURGER_CONSTRUCTOR_SELECTOR).trigger("drop");
+
+    // Оформляем заказ
     cy.contains("button", "Оформить заказ").click();
 
-    // Ждём POST запроса
     cy.wait(`@${postOrder}`).its("response.statusCode").should("eq", 200);
 
-    // Проверяем появление модалки с номером заказа
-    cy.get("[data-cy='modal']").should("be.visible");
+    // Проверяем модалку
+    cy.get(MODAL_SELECTOR).should("be.visible");
 
     // Закрываем модалку
-    cy.get("[data-cy='close-modal']").click();
-    cy.get("[data-cy='modal']").should("not.exist");
+    cy.get(CLOSE_MODAL_BUTTON_SELECTOR).click();
+    cy.get(MODAL_SELECTOR).should("not.exist");
   });
 });

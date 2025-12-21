@@ -5,7 +5,7 @@ type CurrentIngredientState = {
   current: IngredientWithCount | null;
 };
 
-const initialState: CurrentIngredientState = {
+export const initialState: CurrentIngredientState = {
   current: null,
 };
 

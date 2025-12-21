@@ -4,81 +4,77 @@ import reducer, {
   moveIngredient,
   clearConstructor,
   setBun,
+  initialState,
 } from "./constructorSlice";
 import { IngredientWithCount } from "../../utils/types";
 
+// Константы для тестов
+const INGREDIENT: IngredientWithCount = {
+  _id: "1",
+  name: "Lettuce",
+  type: "main",
+  proteins: 0,
+  fat: 0,
+  carbohydrates: 0,
+  calories: 0,
+  price: 10,
+  image: "",
+  image_mobile: "",
+  image_large: "",
+  count: 0,
+};
+
+const BUN: IngredientWithCount = {
+  _id: "2",
+  name: "Bun",
+  type: "bun",
+  proteins: 0,
+  fat: 0,
+  carbohydrates: 0,
+  calories: 0,
+  price: 5,
+  image: "",
+  image_mobile: "",
+  image_large: "",
+  count: 0,
+};
+
 describe("constructorSlice", () => {
-  const initialState = {
-    bun: null,
-    items: [],
-  };
-
-  const ingredient: IngredientWithCount = {
-    _id: "1",
-    name: "Lettuce",
-    type: "main",
-    proteins: 0,
-    fat: 0,
-    carbohydrates: 0,
-    calories: 0,
-    price: 10,
-    image: "",
-    image_mobile: "",
-    image_large: "",
-    count: 0,
-  };
-
-  const bun: IngredientWithCount = {
-    _id: "2",
-    name: "Bun",
-    type: "bun",
-    proteins: 0,
-    fat: 0,
-    carbohydrates: 0,
-    calories: 0,
-    price: 5,
-    image: "",
-    image_mobile: "",
-    image_large: "",
-    count: 0,
-  };
-
-  it("должен возвращать начальное состояние", () => {
+  it("должен возвращать initialState", () => {
     expect(reducer(undefined, { type: "unknown" })).toEqual(initialState);
   });
 
   it("добавляет обычный ингредиент", () => {
-    const action = addIngredient(ingredient);
-    const state = reducer(initialState, action);
+    const state = reducer(initialState, addIngredient(INGREDIENT));
     expect(state.items.length).toBe(1);
-    expect(state.items[0].name).toBe("Lettuce");
+    expect(state.items[0].name).toBe(INGREDIENT.name);
     expect(state.bun).toBeNull();
   });
 
-  it("устанавливает булку", () => {
-    const action = addIngredient(bun);
-    const state = reducer(initialState, action);
-    expect(state.bun?.name).toBe("Bun");
+  it("устанавливает булку через addIngredient", () => {
+    const state = reducer(initialState, addIngredient(BUN));
+    expect(state.bun?.name).toBe(BUN.name);
     expect(state.items.length).toBe(0);
   });
 
   it("удаляет ингредиент по индексу", () => {
-    const stateWithItem = reducer(initialState, addIngredient(ingredient));
+    const stateWithItem = reducer(initialState, addIngredient(INGREDIENT));
     const state = reducer(stateWithItem, removeIngredient(0));
     expect(state.items.length).toBe(0);
   });
 
   it("удаляет ингредиент по uid", () => {
-    const stateWithItem = reducer(initialState, addIngredient(ingredient));
+    const stateWithItem = reducer(initialState, addIngredient(INGREDIENT));
     const uid = stateWithItem.items[0].uid;
     const state = reducer(stateWithItem, removeIngredient(uid));
     expect(state.items.length).toBe(0);
   });
 
-  it("перемещает ингредиент", () => {
-    const stateWithItems = reducer(initialState, addIngredient(ingredient));
-    const ingredient2 = { ...ingredient, _id: "3" };
-    const stateWithTwo = reducer(stateWithItems, addIngredient(ingredient2));
+  it("перемещает ингредиенты", () => {
+    const stateWithItems = reducer(initialState, addIngredient(INGREDIENT));
+    const INGREDIENT2 = { ...INGREDIENT, _id: "3" };
+    const stateWithTwo = reducer(stateWithItems, addIngredient(INGREDIENT2));
+
     const uid1 = stateWithTwo.items[0].uid;
     const uid2 = stateWithTwo.items[1].uid;
 
@@ -93,8 +89,8 @@ describe("constructorSlice", () => {
 
   it("очищает конструктор", () => {
     const stateWithBunAndItem = {
-      bun: { ...bun, uid: "123" },
-      items: [{ ...ingredient, uid: "456" }],
+      bun: { ...BUN, uid: "123" },
+      items: [{ ...INGREDIENT, uid: "456" }],
     };
     const state = reducer(stateWithBunAndItem, clearConstructor());
     expect(state.bun).toBeNull();
@@ -102,12 +98,12 @@ describe("constructorSlice", () => {
   });
 
   it("setBun устанавливает булку", () => {
-    const state = reducer(initialState, setBun(bun));
-    expect(state.bun?.name).toBe("Bun");
+    const state = reducer(initialState, setBun(BUN));
+    expect(state.bun?.name).toBe(BUN.name);
   });
 
   it("setBun сбрасывает булку при null", () => {
-    const stateWithBun = reducer(initialState, setBun(bun));
+    const stateWithBun = reducer(initialState, setBun(BUN));
     const state = reducer(stateWithBun, setBun(null));
     expect(state.bun).toBeNull();
   });
