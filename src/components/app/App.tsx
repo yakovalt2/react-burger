@@ -78,6 +78,16 @@ function App() {
               </>
             }
           />
+
+          <Route
+            path="/react-burger"
+            element={
+              <>
+                <BurgerIngredients />
+                <BurgerConstructor />
+              </>
+            }
+          />
           <Route path="/feed" element={<FeedPage />} />
 
           <Route element={<ProtectedRouteElement onlyUnAuth />}>
