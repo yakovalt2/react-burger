@@ -4,7 +4,7 @@ interface ResetPasswordState {
   canReset: boolean;
 }
 
-const initialState: ResetPasswordState = {
+export const initialState: ResetPasswordState = {
   canReset: false,
 };
 

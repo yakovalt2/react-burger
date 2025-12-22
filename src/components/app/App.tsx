@@ -78,6 +78,7 @@ function App() {
               </>
             }
           />
+          
           <Route path="/feed" element={<FeedPage />} />
 
           <Route element={<ProtectedRouteElement onlyUnAuth />}>

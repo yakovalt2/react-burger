@@ -9,7 +9,7 @@ type ConstructorState = {
   items: ConstructorItem[];
 };
 
-const initialState: ConstructorState = {
+export const initialState: ConstructorState = {
   bun: null,
   items: [],
 };
